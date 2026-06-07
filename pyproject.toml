@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "glass_dynamics"
+version = "0.1.0"
+description = ""
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Denis Cristian Pal", email = "deniscristian.pal@studenti.units.it" },
+]
+
+dependencies = [
+    "numpy",
+    "pandas",
+    "scipy",
+    "scikit-learn",
+    "matplotlib",
+    "seaborn",
+    "chemparse",
+    "pyarrow",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# [project.optional-dependencies]
+# docs = [
+#   "sphinx",
+#   "nbsphinx",
+#   "sphinx-rtd-theme",
+# ]
