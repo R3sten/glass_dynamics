@@ -1,0 +1,29 @@
+\documentclass[12pt, a4paper, oneside, openright]{book}
+
+\input{preamble}
+
+\begin{document}
+	% Frontespizio
+	\frontmatter
+	\subfile{frontespizio}
+	
+	%Sommario
+	\subfile{chapters/sommario}
+	
+	% Indice
+	\tableofcontents
+	\cleardoublepage
+	
+	% Capitoli
+	\mainmatter
+	\subfile{chapters/introduzione}
+	\subfile{chapters/capitolo1}
+	\subfile{chapters/capitolo2}
+	\subfile{chapters/capitolo3}
+	\subfile{chapters/conclusioni}
+	
+	% Bibliografia e parti finali
+	\backmatter
+	\printbibliography[heading=bibintoc, title={Bibliografia}]
+	
+\end{document}

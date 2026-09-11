@@ -1,0 +1,18 @@
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+\usepackage{graphicx}
+\usepackage[a4paper]{geometry}
+\usepackage{subfiles}
+\usepackage{amsmath}
+
+\graphicspath{{figures/}{../figures/}}
+
+% Bibliografia
+\usepackage[
+backend=biber,      % Motore per la generazione della bibliografia
+style=numeric,      % Stile delle citazioni (es. numeric, alphabetic, authoryear)
+sorting=nty,         % Ordina per Nome, Titolo, Anno
+]{biblatex}
+
+% Specifica il file .bib (relativo alla root del progetto)
+\addbibresource{biblio.bib}
