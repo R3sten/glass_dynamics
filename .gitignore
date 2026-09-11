@@ -245,6 +245,8 @@ __marimo__/
 ## Generated if empty string is given at "Please type another file name for output:"
 .pdf
 
+thesis/main.pdf
+
 ## Bibliography auxiliary files (bibtex/biblatex/biber):
 *.bbl
 *.bbl-SAVE-ERROR
@@ -550,3 +552,4 @@ TSWLatexianTemp*
 # option is specified. Footnotes are the stored in a file with suffix Notes.bib.
 # Uncomment the next line to have this generated file ignored.
 #*Notes.bib
+

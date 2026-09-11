@@ -18,7 +18,7 @@
 		\label{glass_transition_plot}
 	\end{figure}
 	
-	L'andamento della viscosità in funzione della temperatura varia al variare del liquido sotto esame come mostrato in Fig. \ref{angell_plot}. Più la curva si discosta da una retta e più l'indice di fragilità $m$ aumenta. Quest'ultimo è definito come la pendenza di $log(\eta)$ in funzione di $T/T_g$ nel punto $T/T_g = 1$ \cite{cavagnaSupercooledLiquidsPedestrians2009}. Liquidi con bassi valori di $m$ (come il vetro delle finestre $SiO_2$) vengono detti forti, mentre quelli aventi alti valori di $m$ fragili.
+	L'andamento della viscosità in funzione della temperatura varia al variare del liquido sotto esame come mostrato in Fig. \ref{angell_plot}. Più la curva si discosta da una retta nel plot di Anglell e più l'indice di fragilità $m$ aumenta. Quest'ultimo è definito come la pendenza di $log(\eta)$ in funzione di $T/T_g$ nel punto $T/T_g = 1$ \cite{cavagnaSupercooledLiquidsPedestrians2009}. Liquidi con bassi valori di $m$ (che formano il vetro $SiO_2$ delle finestre) vengono detti forti, mentre quelli aventi alti valori di $m$ fragili.
 	
 	\begin{figure}[h!]
 		\centering
@@ -27,12 +27,12 @@
 		\label{angell_plot}
 	\end{figure}
 	
-	L'intercetta del plot di Angell indica invece il valore teorico assegnato alla viscosità nel limite in cui la temperatura tende all'infinito. Di seguito verrà indicata con $\eta_\infty = \lim_{T->\infty} \eta(T)$. Tale valore, sebbene fisicamente irrilevante, viene introdotto in quanto spesso usato come parametro dalle forme funzionali empiriche che cercano di interpolare l'andamento della viscosità dei liquidi sottoraffreddati (di seguito chiamati anche "liquidi formatori di vetri") in funzione della temperatura.
+	L'intercetta del plot di Angell indica invece il valore teorico assegnato alla viscosità nel limite in cui la temperatura tende all'infinito. Di seguito verrà indicata con $\eta_\infty = \lim_{T->\infty} \eta(T)$. Tale valore, sebbene fisicamente poco rilevante, viene introdotto in quanto usato come parametro dalle forme funzionali che cercano di interpolare l'andamento della viscosità dei liquidi sottoraffreddati (di seguito chiamati anche "liquidi formatori di vetro") in funzione della temperatura.
 	Tra queste la più nota è la legge di VFT (Vogel-Fulcher-Tamman) \cite{fulcherAnalysisRecentMeasurements1925}:
 	\begin{equation}
 		\log_{10} \eta(T) = \log_{10} \eta_\infty + \frac{(12 - \log_{10} \eta_\infty)^2}{m (T/T_g - 1) + (12 - \log_{10} \eta_\infty)}
 	\end{equation}
-	Un altra ancora è l'equazione MYEGA (Mauro–Yue–Ellison–Gupta–Allan), che a basse temperature risulta più accurata della prima \cite{mauroViscosityGlassformingLiquids2009}:
+	Un altra ancora è l'equazione MYEGA (Mauro–Yue–Ellison–Gupta–Allan), che risulta più accurata della prima a basse temperature \cite{mauroViscosityGlassformingLiquids2009}:
 	\begin{equation}
 		\begin{aligned}
 			&\log_{10} \eta(T) \\
@@ -42,6 +42,7 @@
 
 
 	\section{Modelli data-driven}
+		
 		Perché ci interessa tutto questo?? Discorso introduttivo di Cassar...
 		Features in input- output e perché vogliamo fare questo fit
 		svantaggi e vantaggi, approcci
@@ -51,7 +52,7 @@
 	
 	Lo standard attuale per la realizzazione di modelli data driven nello studio dei liquidi sottoraffreddati si basa sull'utilizzo di neural networks per generare predizioni delle loro proprietà partendo della loro composizione chimica. Tale procedura consente di ottenere risultati molto accurati grazie alla elevata capacità delle reti neurali di individuare pattern complessi tra features (input) e targets (output) con un set di dati su cui allenare la rete sufficientemente ampio.
 	Tuttavia, il problema di questo approccio risiede nella bassa interpretabilità dei risultati ottenuti. Proprio per questo motivo questi modelli vengono chiamati "black-box". Si possono ricavare alcune informazioni sul loro funzionamento interno tramite analisi computazionalmente impegnative come la SHAP (SHapley Additive exPlanations), tuttavia tale procedura è in grado di fornire solo informazioni indicative e non sempre accurate sull'interpretabilità delle predizioni.
-	Un metodo interessante per migliorare l'interpretabilità di questo tipo di modelli è quello adottato da Cassar \autocite{cassarViscNetNeuralNetwork2021} nella realizzazione di ViscNet. Tale modello mira a studiare con un approccio "gray-box" la dipendenza della viscosità dalla temperatura di "vetri basati su ossidi". Al posto di far predire al modello direttamente la viscosità, la rete neurale predice i parametri dell'equazione MYEGA: l'indice di fragilità del liquido, la temperatura di transizione vetrosa e la viscosità asintotica. Grazie a questi parametri, risulta poi possibile calcolare la viscosità a qualsiasi temperatura di interesse sfruttando il vantaggio delle buone capacità di estrapolazione intrinseche dell'equazione.
+	Un metodo interessante per migliorare l'interpretabilità di questo tipo di modelli è quello adottato da Cassar \autocite{cassarViscNetNeuralNetwork2021} nella realizzazione di ViscNet. Tale modello mira a studiare con un approccio "gray-box" la dipendenza della viscosità dalla temperatura di "vetri basati su ossidi". Al posto di far predire al modello direttamente la viscosità, la rete neurale predice i parametri dell'equazione MYEGA. Grazie a questi risulta poi possibile calcolare la viscosità a qualsiasi temperatura di interesse sfruttando il vantaggio delle buone capacità di estrapolazione intrinseche dell'equazione.
 	Sebbene questo fornisca informazioni in più rispetto ad un approccio puramente black-box, il problema intrinseco sull'interpretabilità della NN permane.
 	Per tale ragione, nello svolgimento di questo lavoro di tesi, si è scelto di replicare l'analisi fatta da Cassar utilizzando un modello lineare. Quest'ultimo, infatti, in linea di principio offre totale trasparenza sui meccanismi interni che collegano features e targets. Naturalmente questo è inevitabilmente correlato a una perdita di performance siccome le dipendenze fisiche tra i dati spesso non sono lineari. Tuttavia non è sempre il caso, per cui vale comunque la pena tentare di esplorare in via preliminare la situazione con un modello più semplice prima di adottare una rete neurale anche nell'ottica di effettuare predizioni. In questo modo, tramite lo studio dei pesi interni del modello lineare, risulta possibile ricavare informazioni preziose riguardanti la fisica che sta dietro ai risultati ottenuti.
 	%TODO:	spiegare meglio la Filosofia dello stuido?
