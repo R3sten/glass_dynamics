@@ -18,16 +18,16 @@
 		\label{glass_transition_plot}
 	\end{figure}
 	
-	L'andamento della viscosità in funzione della temperatura varia al variare del liquido sotto esame come mostrato in Fig. \ref{angell_plot}. Più la curva si discosta da una retta nel plot di Anglell e più l'indice di fragilità $m$ aumenta. Quest'ultimo è definito come la pendenza di $log(\eta)$ in funzione di $T/T_g$ nel punto $T/T_g = 1$ \cite{cavagnaSupercooledLiquidsPedestrians2009}. Liquidi con bassi valori di $m$ (che formano il vetro $SiO_2$ delle finestre) vengono detti forti, mentre quelli aventi alti valori di $m$ fragili.
+	L'andamento della viscosità in funzione della temperatura varia al variare del liquido sotto esame come mostrato in Fig. \ref{angell_plot}. Più la curva si discosta da una retta nel plot di Anglell e più l'indice di fragilità $m$ aumenta. Quest'ultimo è definito come la pendenza di $log(\eta)$ in funzione di $T/T_g$ nel punto $T/T_g = 1$ \cite{angellStrongFragileLiquids2013}. Liquidi con bassi valori di $m$ (come il $SiO_2$ con cui si fa il vetro delle finestre) vengono detti forti, mentre quelli aventi alti valori di $m$ fragili.
 	
 	\begin{figure}[h!]
 		\centering
-		\includegraphics[height=10cm]{angell_plot.png}
+		\includegraphics[height=11cm]{angell_plot.png}
 		\caption{Plot di Angell - Andamento del logaritmo della viscosità in funzione dell'inverso della temperatura \cite{angellFormationGlassesLiquids1995}.}
 		\label{angell_plot}
 	\end{figure}
 	
-	L'intercetta del plot di Angell indica invece il valore teorico assegnato alla viscosità nel limite in cui la temperatura tende all'infinito. Di seguito verrà indicata con $\eta_\infty = \lim_{T->\infty} \eta(T)$. Tale valore, sebbene fisicamente poco rilevante, viene introdotto in quanto usato come parametro dalle forme funzionali che cercano di interpolare l'andamento della viscosità dei liquidi sottoraffreddati (di seguito chiamati anche "liquidi formatori di vetro") in funzione della temperatura.
+	L'intercetta del plot di Angell indica invece il valore teorico assegnato alla viscosità nel limite in cui la temperatura tende all'infinito. Di seguito verrà indicata con $\eta_\infty = \lim_{T->\infty} \eta(T)$. Tale valore, sebbene fisicamente poco rilevante, viene introdotto in quanto usato come parametro dalle forme funzionali che cercano di interpolare l'andamento della viscosità dei liquidi sottoraffreddati in funzione della temperatura.
 	Tra queste la più nota è la legge di VFT (Vogel-Fulcher-Tamman) \cite{fulcherAnalysisRecentMeasurements1925}:
 	\begin{equation}
 		\log_{10} \eta(T) = \log_{10} \eta_\infty + \frac{(12 - \log_{10} \eta_\infty)^2}{m (T/T_g - 1) + (12 - \log_{10} \eta_\infty)}
@@ -42,31 +42,78 @@
 
 
 	\section{Modelli data-driven}
-		
-		Perché ci interessa tutto questo?? Discorso introduttivo di Cassar...
-		Features in input- output e perché vogliamo fare questo fit
-		svantaggi e vantaggi, approcci
+	\label{modell_datadriven}
+	
+%	Perché ci interessa tutto questo?? Discorso introduttivo di Cassar...
+%	Features in input- output e perché vogliamo fare questo fit
+%	svantaggi e vantaggi, approcci
+	
+	I modelli data-driven sono costruiti, partendo dai dati, utilizzando diversi metodi di machine learning. Solitamente vengono realizzati per effettuare classificazioni, regressioni o predizioni. Essendo i dati una loro componente fondamentale, la qualità di questi ultimi influisce pesantemente sulle loro performance, per cui è fondamentale assicurarsi della buona qualità dei dati di partenza\cite{torraChapter4Data2023}.
+	
+	Nel contesto dei liquidi sottoraffreddati, nello specifico nel caso dei liquidi formatori di vetro, la dipendenza della viscosità dalla temperatura viene utilizzata per regolare le variabili di processo nella produzione dei vetri. Modelli predittivi affidabili possono quindi aiutare a aumentare la velocità e ridurre i costi di sviluppo di nuovi materiali \cite{cassarViscNetNeuralNetwork2021}.
+	
+	I metodi di machine learning più utilizzati si basano sulle reti neurali (NN). Queste sono particolarmente abili a trovare pattern e dipendenze non lineari tra i dati in input (features) e quelli in output (targets).
+	Il metodo più diffuso si basa sull'utilizzo delle feedforward NN (vedi Paragrafo \ref{reti_neurali}).
+	
+	Il problema di questo approccio, tuttavia, risiede nella bassa interpretabilità dei risultati ottenuti. Proprio per questo motivo questi modelli vengono chiamati "black-box". Si possono ricavare alcune informazioni sul loro funzionamento interno tramite analisi computazionalmente impegnative come la SHAP (SHapley Additive exPlanations), tuttavia tale procedura è in grado di fornire solo informazioni indicative e non sempre accurate sull'interpretabilità delle predizioni.
+	
+	Un metodo interessante per migliorare l'interpretabilità di questo tipo di modelli è quello adottato da Cassar nella realizzazione di ViscNet \autocite{cassarViscNetNeuralNetwork2021}. Tale modello mira a studiare con un approccio "gray-box" la dipendenza della viscosità dalla temperatura dei liquidi ossidici formatori di vetro. Al posto di far predire al modello direttamente la viscosità, la rete neurale predice i parametri dell'equazione MYEGA. Grazie a questi risulta poi possibile calcolare la viscosità a qualsiasi temperatura di interesse sfruttando il vantaggio delle buone capacità di estrapolazione intrinseche dell'equazione.
+	Egli inoltre introduce uno step preliminare di pre-processing dei dati che mira a estrarre features di alto livello su cui allenare il modello al posto di fornigli direttamente i dati grezzi. Uno schema della pipline utilizzata da ViscNet è mostrato in Fig. \ref{flowchart_viscnet}.
+	
+	\begin{figure}[h!]
+	\centering
+	\includegraphics[height=7cm]{flowchart_viscnet.png}
+	\caption{Flowchart della pipline usata in ViscNet \cite{cassarViscNetNeuralNetwork2021}.}
+	\label{flowchart_viscnet}
+	\end{figure}
+	
+	Un altro vantaggio di questo approccio "gray-box", rispetto a un approccio "black-box", è che i parametri di viscosità possono essere previsti individualmente. Di conseguenza, lo stesso modello addestrato prevede non solo la dipendenza della viscosità dalla temperatura, ma anche l'indice di fragilità del liquido e la sua temperatura di transizione vetrosa.
 	
 	\section{Perché un modello lineare?}
-	%TODO: da riscrivere meglio (è la prima sezione che ho buttato giù)
-	
-	Lo standard attuale per la realizzazione di modelli data driven nello studio dei liquidi sottoraffreddati si basa sull'utilizzo di neural networks per generare predizioni delle loro proprietà partendo della loro composizione chimica. Tale procedura consente di ottenere risultati molto accurati grazie alla elevata capacità delle reti neurali di individuare pattern complessi tra features (input) e targets (output) con un set di dati su cui allenare la rete sufficientemente ampio.
-	Tuttavia, il problema di questo approccio risiede nella bassa interpretabilità dei risultati ottenuti. Proprio per questo motivo questi modelli vengono chiamati "black-box". Si possono ricavare alcune informazioni sul loro funzionamento interno tramite analisi computazionalmente impegnative come la SHAP (SHapley Additive exPlanations), tuttavia tale procedura è in grado di fornire solo informazioni indicative e non sempre accurate sull'interpretabilità delle predizioni.
-	Un metodo interessante per migliorare l'interpretabilità di questo tipo di modelli è quello adottato da Cassar \autocite{cassarViscNetNeuralNetwork2021} nella realizzazione di ViscNet. Tale modello mira a studiare con un approccio "gray-box" la dipendenza della viscosità dalla temperatura di "vetri basati su ossidi". Al posto di far predire al modello direttamente la viscosità, la rete neurale predice i parametri dell'equazione MYEGA. Grazie a questi risulta poi possibile calcolare la viscosità a qualsiasi temperatura di interesse sfruttando il vantaggio delle buone capacità di estrapolazione intrinseche dell'equazione.
-	Sebbene questo fornisca informazioni in più rispetto ad un approccio puramente black-box, il problema intrinseco sull'interpretabilità della NN permane.
-	Per tale ragione, nello svolgimento di questo lavoro di tesi, si è scelto di replicare l'analisi fatta da Cassar utilizzando un modello lineare. Quest'ultimo, infatti, in linea di principio offre totale trasparenza sui meccanismi interni che collegano features e targets. Naturalmente questo è inevitabilmente correlato a una perdita di performance siccome le dipendenze fisiche tra i dati spesso non sono lineari. Tuttavia non è sempre il caso, per cui vale comunque la pena tentare di esplorare in via preliminare la situazione con un modello più semplice prima di adottare una rete neurale anche nell'ottica di effettuare predizioni. In questo modo, tramite lo studio dei pesi interni del modello lineare, risulta possibile ricavare informazioni preziose riguardanti la fisica che sta dietro ai risultati ottenuti.
+	Sebbene l'approccio gray-box descritto nel Paragrafo \ref{modell_datadriven} fornisca informazioni in più rispetto ad un approccio puramente black-box, il problema intrinseco sull'interpretabilità della NN permane.
+	Per tale ragione, nello svolgimento di questo lavoro di tesi, si è scelto di replicare l'analisi fatta da Cassar utilizzando un modello lineare. Quest'ultimo infatti, in linea di principio, offre totale trasparenza sui meccanismi interni che collegano features e targets. Naturalmente questo è inevitabilmente correlato a una perdita di performance siccome le dipendenze fisiche tra i dati spesso non sono lineari. In questo modo però, tramite lo studio dei pesi interni del modello lineare, risulta possibile ricavare informazioni utili riguardanti la fisica che sta dietro ai risultati ottenuti.
 	%TODO:	spiegare meglio la Filosofia dello stuido?
 	
-	\subsection{Confronto tra regressione lineare e reti neurali}
-	%! Serve davvero??
+	\subsection{Confronto tra reti neurali e regressione lineare}
+	\label{reti_neurali}
 	%	più facili da intepretari, sono più seplici, in ambito fisico si prestano ad un intepretazione tra features in input e output
+	
+	Neural network is a general term for a group of machine
+	learning algorithms used for pattern recognition, which is
+	performed by an assortment of interconnected computa-
+	tional units called neurons. In materials science, NNs can
+	be applied in many types of problems and are often used
+	for their universal regressor capabilities. This work focuses
+	on feedforward multilayer perceptron NNs, one of the most
+	simple architectures of NNs.
+	
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[height=3cm]{perceptron.png}
+		\caption{Rappresentazione schematica di un Perceptron a 3 input \cite{nielsenNeuralNetworksDeep2015}.}
+		\label{perceptron}
+	\end{figure}
+	
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[height=7cm]{neural_network_ffmlp.png}
+		\caption{Rappresentazione schematica di una rete neurale feedforward \cite{nielsenNeuralNetworksDeep2015}.}
+		\label{neural_network_fig}
+	\end{figure}
+	
+	!! Da citare la funzione di attivazione che nella regressione lineare non c'è
+	
+	La regressione lineare non è altro che un perceptron senza funzione di attivazione. Se ci sono più output ci sono più perceptron, ma a differenza di una rete neurale la profondità è sempre 1
+	
+	Da scrivere equazione che descrive modello lineare multidimensionale e spiegare cosa significa il parametro 0
+	
 	
 	
 	\subsection{Il problema della multicollinerità}
-	
+	La collinearità indica quando due variabili indipendenti in un'analisi di regressione sono esse stesse correlate; la multicollinearità significa quando più di due variabili indipendenti sono correlate. \cite{kavlakogluCheCoseMulticollinearita2025}
 	
 	\subsection{Ridge Regression}
-	In particolare è stata utilizzata una ridge regression durante il corso dell'analisi per poter limitare gli effetti della mulitcollinearità tra le features che ha come conseguenza la perdita del senso fisico dei pesi del modello.
-	Spiegare perchè...
+	In particolare è stata utilizzata una ridge regression durante il corso dell'analisi per poter limitare gli effetti della mulitcollinearità tra le features che ha come conseguenza la perdita del senso fisico dei pesi del modello. \cite{sharmaInterpretabilityLinearRegression2026}
+	Spiegare perché...
 	
 \end{document}
