@@ -6,10 +6,10 @@
 	
 	\section{Liquidi sottoraffreddati e viscosità}
 	
-	Un liquido si definisce "sottoraffreddato" nel momento in cui viene portato al di sotto della sua temperatura di fusione $T_m$ evitando il processo di cristallizzazione.
-	Man mano che si diminuisce la temperatura, mantenendo il sistema in questo stato metastabile, la viscosità del liquido aumenta di diversi ordini di grandezza fino ad arrivare al punto critico in cui il tempo di rilassamento supera il tempo di osservazione sperimentale, per cui la sua evoluzione appare congelata (Fig. \ref {glass_transition_plot}).
-	Questa è quella che viene definita transizione vetrosa, a seguito della quale il liquido si trasforma in vetro. Non si tratta di una vera e propria trasformazione di fase termodinamica, in quanto microscopicamente si ha ancora a che fare con un liquido sottoraffreddato dall'elevata viscosità, ma macroscopicamente il materiale manifesta le proprietà di un solido.
-	La temperatura di transizione vetrosa $T_g$ dipende dalla velocità di raffreddamento e dal tempo di osservazione sperimentale preso come riferimento. In seguito verrà definita, seguendo la convenzione standard, come la temperatura alla quale la viscosità $\eta (T_g) = 10^{12}$ Pa s \cite{cavagnaSupercooledLiquidsPedestrians2009}.
+	Un liquido si definisce "sottoraffreddato" nel momento in cui viene portato al di sotto della sua temperatura di fusione $T_m$ evitando il processo di cristallizzazione. \DC{un liquido non ha una temperatura di fusione... l'incipit è importante, rivediamo questa frase}
+	Man mano che si diminuisce la temperatura, mantenendo il sistema in questo stato metastabile, la viscosità del liquido aumenta di diversi ordini di grandezza fino ad arrivare a uno stato in cui il tempo di rilassamento \DC{di cosa? definito come?} supera il tempo di osservazione sperimentale, per cui la sua \DC{di chi?} evoluzione appare congelata (Fig.~\ref{glass_transition_plot} \DC{attenzione alle tilde, ti spiego}).
+	Questa è quella che \DC{costruzione debole} viene definita transizione vetrosa, a seguito della quale il liquido si trasforma in vetro. Non si tratta di una vera e propria trasformazione di fase termodinamica, in quanto microscopicamente si ha ancora a che fare con un liquido sottoraffreddato dall'elevata viscosità, ma macroscopicamente il materiale manifesta le proprietà di un solido.
+	La temperatura di transizione vetrosa $T_g$ dipende dalla velocità di raffreddamento e dal tempo di osservazione sperimentale preso come riferimento. In seguito \DC{soggetto?} verrà definita, seguendo la convenzione standard, come la temperatura alla quale la viscosità $\eta (T_g) = 10^{12}$ Pa s~\cite{cavagnaSupercooledLiquidsPedestrians2009}.
 	
 	\begin{figure}[h!]
 		\centering
@@ -18,7 +18,7 @@
 		\label{glass_transition_plot}
 	\end{figure}
 	
-	L'andamento della viscosità in funzione della temperatura varia al variare del liquido sotto esame come mostrato in Fig. \ref{angell_plot}. Più la curva si discosta da una retta nel plot di Anglell e più l'indice di fragilità $m$ aumenta. Quest'ultimo è definito come la pendenza di $log(\eta)$ in funzione di $T/T_g$ nel punto $T/T_g = 1$ \cite{angellStrongFragileLiquids2013}. Liquidi con bassi valori di $m$ (come il $SiO_2$ con cui si fa il vetro delle finestre) vengono detti forti, mentre quelli aventi alti valori di $m$ fragili.
+	L'andamento della viscosità in funzione della temperatura varia al variare \DC{!! a seconda} del liquido sotto esame come mostrato in Fig.~\ref{angell_plot}. \DC{Descrivere il grafico e dire che si chiama plot di Angell se no poi non `e chiaro} Più la curva si discosta da una retta nel plot di Angell e più l'indice di fragilità $m$ aumenta. Quest'ultimo è definito come la pendenza di $log(\eta)$ in funzione di $T/T_g$ nel punto $T/T_g = 1$~\cite{angellStrongFragileLiquids2013}. Liquidi con bassi valori di $m$ (come il $SiO_2$, che il componente principale del vetro delle finestre) vengono detti forti, mentre quelli aventi alti valori di $m$ fragili.
 	
 	\begin{figure}[h!]
 		\centering
@@ -27,19 +27,18 @@
 		\label{angell_plot}
 	\end{figure}
 	
-	L'intercetta del plot di Angell indica invece il valore teorico assegnato alla viscosità nel limite in cui la temperatura tende all'infinito. Di seguito verrà indicata con $\eta_\infty = \lim_{T->\infty} \eta(T)$. Tale valore, sebbene fisicamente poco rilevante, viene introdotto in quanto usato come parametro dalle forme funzionali che cercano di interpolare l'andamento della viscosità dei liquidi sottoraffreddati in funzione della temperatura.
-	Tra queste la più nota è la legge di VFT (Vogel-Fulcher-Tamman) \cite{fulcherAnalysisRecentMeasurements1925}:
+	L'intercetta del plot di Angell indica invece il valore teorico assegnato alla viscosità nel limite in cui la temperatura tende all'infinito. Di seguito verrà indicata con $\eta_\infty = \lim_{T->\infty} \eta(T)$. Tale valore, sebbene fisicamente poco rilevante, \DC{però se consideri $\tau(T)$ il senso fisico di $\tau_\infty$ est più interessante} viene introdotto in quanto usato come parametro dalle forme funzionali che cercano di interpolare l'andamento della viscosità dei liquidi sottoraffreddati in funzione della temperatura. \DC{Menzionare Anche Arrhenius, così puoi spiegare cosa ci si aspetta per un liquido strong}
+	Tra queste la più nota è la legge di VFT (Vogel-Fulcher-Tamman) \DC{dire che è fenomenologica ma si può ottenere da certi modelli teorici, quindi ha un fondamento fisico} \cite{fulcherAnalysisRecentMeasurements1925}:
 	\begin{equation}
 		\log_{10} \eta(T) = \log_{10} \eta_\infty + \frac{(12 - \log_{10} \eta_\infty)^2}{m (T/T_g - 1) + (12 - \log_{10} \eta_\infty)}
 	\end{equation}
-	Un altra ancora è l'equazione MYEGA (Mauro–Yue–Ellison–Gupta–Allan), che risulta più accurata della prima a basse temperature \cite{mauroViscosityGlassformingLiquids2009}:
+	Un altra ancora è l'equazione MYEGA (Mauro–Yue–Ellison–Gupta–Allan), che risulta più accurata della prima a basse temperature \cite{mauroViscosityGlassformingLiquids2009}: \DC{dire l'idea fisica, ovvero che la barriera di attivazione dipende a sua volta da T secondo un esponenziale}
 	\begin{equation}
 		\begin{aligned}
 			&\log_{10} \eta(T) \\
 			&= \log_{10} \eta_\infty + (12 - \log_{10} \eta_\infty) \frac{T_g}{T} \exp \left[ \left( \frac{m}{12 - \log_{10} \eta_\infty} - 1 \right) \left( \frac{T_g}{T} - 1 \right) \right]
 		\end{aligned}
 	\end{equation}
-
 
 	\section{Modelli data-driven}
 	\label{modell_datadriven}
@@ -48,17 +47,17 @@
 %	Features in input- output e perché vogliamo fare questo fit
 %	svantaggi e vantaggi, approcci
 	
-	I modelli data-driven sono costruiti, partendo dai dati, utilizzando diversi metodi di machine learning. Solitamente vengono realizzati per effettuare classificazioni, regressioni o predizioni. Essendo i dati una loro componente fondamentale, la qualità di questi ultimi influisce pesantemente sulle loro performance, per cui è fondamentale assicurarsi della buona qualità dei dati di partenza\cite{torraChapter4Data2023}.
+	I modelli data-driven sono costruiti, partendo dai dati, utilizzando diversi metodi di machine learning \DC{direi piuttosto fittando i dati tramite metodi di machine learning}. Solitamente \DC{soggetto} vengono realizzati per effettuare classificazioni, regressioni o predizioni. Essendo i dati una loro componente fondamentale, la qualità di questi ultimi influisce pesantemente sulle loro performance \DC{performance qui non è chiaro, vuoi dire accuratezza penso o qualcosa del genere}, per cui è fondamentale assicurarsi della buona qualità dei dati di partenza~\cite{torraChapter4Data2023}.
 	
-	Nel contesto dei liquidi sottoraffreddati, nello specifico nel caso dei liquidi formatori di vetro, la dipendenza della viscosità dalla temperatura viene utilizzata per regolare le variabili di processo nella produzione dei vetri. Modelli predittivi affidabili possono quindi aiutare a aumentare la velocità e ridurre i costi di sviluppo di nuovi materiali \cite{cassarViscNetNeuralNetwork2021}.
+	Nel contesto dei liquidi sottoraffreddati, nello specifico nel caso dei liquidi formatori di vetro, la dipendenza della viscosità dalla temperatura viene utilizzata per regolare le variabili di processo \DC{di processo?} nella produzione dei vetri. Modelli predittivi affidabili possono quindi aiutare a aumentare la velocità \DC{di cosa?} e ridurre i costi di sviluppo di nuovi materiali~\cite{cassarViscNetNeuralNetwork2021}.
 	
-	I metodi di machine learning più utilizzati si basano sulle reti neurali (NN). Queste sono particolarmente abili a trovare pattern e dipendenze non lineari tra i dati in input (features) e quelli in output (targets).
+	I metodi di machine learning più utilizzati si basano sulle reti neurali (NN). Queste sono particolarmente abili a trovare pattern e dipendenze non lineari tra i dati in input (features) e quelli in output (targets). \DC{metti in italico le parole inglesi?}
 	Il metodo più diffuso si basa sull'utilizzo delle feedforward NN (vedi Paragrafo \ref{reti_neurali}).
 	
-	Il problema di questo approccio, tuttavia, risiede nella bassa interpretabilità dei risultati ottenuti. Proprio per questo motivo questi modelli vengono chiamati "black-box". Si possono ricavare alcune informazioni sul loro funzionamento interno tramite analisi computazionalmente impegnative come la SHAP (SHapley Additive exPlanations), tuttavia tale procedura è in grado di fornire solo informazioni indicative e non sempre accurate sull'interpretabilità delle predizioni.
+	Il problema di questo approccio, tuttavia, risiede nella bassa interpretabilità dei risultati ottenuti. Proprio per questo motivo questi modelli vengono spesso considerati delle "black-box". Si possono ricavare alcune informazioni sul loro funzionamento interno tramite analisi computazionalmente impegnative come la SHAP (SHapley Additive exPlanations) \DC{referenza}, tuttavia tale procedura è in grado di fornire solo informazioni indicative e non sempre accurate sull'interpretabilità delle predizioni. 
 	
-	Un metodo interessante per migliorare l'interpretabilità di questo tipo di modelli è quello adottato da Cassar nella realizzazione di ViscNet \autocite{cassarViscNetNeuralNetwork2021}. Tale modello mira a studiare con un approccio "gray-box" la dipendenza della viscosità dalla temperatura dei liquidi ossidici formatori di vetro. Al posto di far predire al modello direttamente la viscosità, la rete neurale predice i parametri dell'equazione MYEGA. Grazie a questi risulta poi possibile calcolare la viscosità a qualsiasi temperatura di interesse sfruttando il vantaggio delle buone capacità di estrapolazione intrinseche dell'equazione.
-	Egli inoltre introduce uno step preliminare di pre-processing dei dati che mira a estrarre features di alto livello su cui allenare il modello al posto di fornigli direttamente i dati grezzi. Uno schema della pipline utilizzata da ViscNet è mostrato in Fig. \ref{flowchart_viscnet}.
+	Un metodo interessante per migliorare l'interpretabilità di questo tipo di modelli è quello adottato da Cassar nella realizzazione di ViscNet~\autocite{cassarViscNetNeuralNetwork2021}. \DC{cosa è viscnet?} Tale modello mira a studiare con un approccio "gray-box" la dipendenza della viscosità dalla temperatura dei liquidi ossidici \DC{ossidi?} formatori di vetro. Invece di predire direttamente la viscosità, la rete neurale predice i parametri dell'equazione MYEGA. \DC{qui c'è la solito confusione riguardo predizione, andrebbe chiarito} Grazie a questi risulta poi possibile calcolare la viscosità a qualsiasi temperatura di interesse sfruttando il vantaggio delle buone capacità di estrapolazione intrinseche dell'equazione.
+	Cassar inoltre introduce uno step preliminare di pre-processing dei dati che mira a estrarre features di alto livello su cui allenare il modello al posto di fornirgli direttamente i dati grezzi. Uno schema della pipeline utilizzata da ViscNet è mostrato in Fig.~\ref{flowchart_viscnet}.
 	
 	\begin{figure}[h!]
 	\centering
@@ -67,11 +66,11 @@
 	\label{flowchart_viscnet}
 	\end{figure}
 	
-	Un altro vantaggio di questo approccio "gray-box", rispetto a un approccio "black-box", è che i parametri di viscosità possono essere previsti individualmente. Di conseguenza il modello prevede non solo la dipendenza della viscosità dalla temperatura, ma anche l'indice di fragilità del liquido e la sua temperatura di transizione vetrosa.
+	Un altro vantaggio di questo approccio "gray-box" rispetto a un approccio "black-box", è che i parametri di viscosità possono essere previsti individualmente. \DC{non capisco bene qui...} Di conseguenza il modello prevede non solo la dipendenza della viscosità dalla temperatura, ma anche l'indice di fragilità del liquido e la sua temperatura di transizione vetrosa. \DC{ok, ma in realtà si può fare comunque no?}
 	
 	\section{Perché un modello lineare?}
-	Sebbene l'approccio gray-box descritto nel Paragrafo \ref{modell_datadriven} fornisca informazioni in più rispetto ad un approccio puramente black-box, il problema intrinseco sull'interpretabilità della NN permane.
-	Per tale ragione, nello svolgimento di questo lavoro di tesi, si è scelto di replicare l'analisi fatta da Cassar utilizzando un modello lineare. Quest'ultimo infatti, in linea di principio, offre totale trasparenza sui meccanismi interni che collegano features e targets. Naturalmente questo è inevitabilmente correlato a una perdita di performance siccome le dipendenze fisiche tra i dati spesso non sono lineari. In questo modo però, tramite lo studio dei pesi interni del modello lineare, risulta possibile ricavare informazioni utili riguardanti la fisica che sta dietro ai risultati ottenuti.
+	Sebbene l'approccio gray-box descritto nella Sezione~\ref{modell_datadriven} fornisca maggiori informazioni rispetto ad un approccio puramente black-box, il problema intrinseco sull'interpretabilità della NN permane. \DC{perchè?}
+	Per tale ragione, nello svolgimento di questo lavoro di tesi, si è scelto di replicare l'analisi fatta da Cassar utilizzando un modello lineare. Quest'ultimo infatti, in linea di principio, offre totale trasparenza sui meccanismi interni che collegano features e targets. \DC{referenze} Naturalmente questo è inevitabilmente correlato a una perdita di performance \DC{anche qui chiariamo meglio} siccome le dipendenze fisiche tra i dati spesso non sono lineari. \DC{però con tanti dati alle volte si compensa... forse si può aggiungere una frase} In questo modo però, tramite lo studio dei pesi interni del modello lineare, risulta possibile ricavare informazioni utili riguardanti la fisica che sta dietro ai risultati ottenuti.
 	%TODO:	spiegare meglio la Filosofia dello stuido?
 	
 	\subsection{Confronto tra reti neurali e regressione lineare}
