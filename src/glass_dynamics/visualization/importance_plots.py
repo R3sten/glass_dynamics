@@ -1,7 +1,9 @@
 """
 Feature Importance Visualization Module.
 
-Generates the signature 'S-curve' sorted weights plot from Sharma et al.
+Generates the signature 'S-curve' sorted weights plot. Includes built-in 
+filtering for sparse models (like Elastic Net or Lasso) to remove features 
+with zero weight, dynamically adjusting the S-curve to active features only.
 """
 
 import numpy as np
@@ -13,6 +15,7 @@ from glass_dynamics.core.logger import logger
 def plot_sorted_feature_importance(
     importance_dict: Dict[str, pd.DataFrame],
     top_n: int = 4,
+    filter_zeros: bool = False,
     figsize: Tuple[int, int] = (15, 5)
 ) -> plt.Figure:
     """
@@ -25,6 +28,9 @@ def plot_sorted_feature_importance(
         Dictionary of importance DataFrames containing raw weights.
     top_n : int, default=4
         Number of most important features (by absolute magnitude) to annotate.
+    filter_zeros : bool, default=False
+        If True, removes features with weights effectively equal to zero 
+        (e.g., eliminated by ElasticNet/Lasso sparsity) before plotting.
     figsize : Tuple[int, int], default=(15, 5)
         Overall dimensions of the generated figure.
 
@@ -44,9 +50,16 @@ def plot_sorted_feature_importance(
         
     for ax, target, panel_label in zip(axes, target_names, ['(a)', '(b)', '(c)']):
         df = importance_dict[target]
+        
+        # --- NEW LOGIC: Filter zero weights for sparse models ---
+        if filter_zeros:
+            # We use a 1e-6 tolerance to account for floating-point precision 
+            # noise in coefficients that mathematically should be zero.
+            df = df[df['abs_weight'] > 1e-6].copy()
+            
         n_features = len(df)
         
-        # Sort weights algebraically to create the S-curve
+        # Sort weights algebraically to create the continuous S-curve
         df_algebraic = df.sort_values(by='weight', ascending=True).reset_index(drop=True)
         
         ax.plot(
@@ -59,10 +72,10 @@ def plot_sorted_feature_importance(
             linewidth=1.2
         )
         
-        # Apply dynamic margins. This preserves the dynamic range of the y-axis 
-        # while adding 25% padding top/bottom and 15% left/right.
+        # Apply dynamic margins to preserve dynamic y-axis range
         ax.margins(x=0.15, y=0.25)
         
+        # Extract the absolute most important features for annotation
         top_features = df.sort_values(by='abs_weight', ascending=False).head(top_n)
         
         for i, (_, row) in enumerate(top_features.iterrows()):
@@ -74,14 +87,7 @@ def plot_sorted_feature_importance(
             plot_idx = df_algebraic[df_algebraic['feature'] == feature_name].index[0]
             
             # --- Robust Annotation Logic via Screen Points ---
-            # Instead of data coordinates, we shift the text by a fixed number of pixels.
-            # This prevents overlap entirely, regardless of the dynamic y-axis range.
-            
-            # X shift: 35 pixels left or right depending on the screen half
             x_offset_pts = 35 if plot_idx < (n_features / 2) else -35
-            
-            # Y shift: base 15 pixels up/down, alternating by an extra 20 pixels 
-            # to prevent multiple labels on the same side from colliding
             y_sign = 1 if weight > 0 else -1
             y_offset_pts = y_sign * (15 + (i % 2) * 20)
             
@@ -89,7 +95,7 @@ def plot_sorted_feature_importance(
                 display_label,
                 xy=(plot_idx, weight),
                 xytext=(x_offset_pts, y_offset_pts),
-                textcoords='offset points', # Calculates offset in pixels, not data!
+                textcoords='offset points',
                 arrowprops=dict(arrowstyle='->', lw=1, color='black'),
                 fontsize='small',
                 ha='left' if x_offset_pts > 0 else 'right',

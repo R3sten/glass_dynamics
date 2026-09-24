@@ -5,114 +5,212 @@
 	% Tutto quello che serve per capire i capitoli dopo
 	
 	\section{Liquidi sottoraffreddati e viscosità}
+	\label{sec:liquidi_sottoraffreddati}
 	
-	Un liquido si definisce "sottoraffreddato" nel momento in cui viene portato al di sotto della sua temperatura di fusione $T_m$ evitando il processo di cristallizzazione. \DC{un liquido non ha una temperatura di fusione... l'incipit è importante, rivediamo questa frase}
-	Man mano che si diminuisce la temperatura, mantenendo il sistema in questo stato metastabile, la viscosità del liquido aumenta di diversi ordini di grandezza fino ad arrivare a uno stato in cui il tempo di rilassamento \DC{di cosa? definito come?} supera il tempo di osservazione sperimentale, per cui la sua \DC{di chi?} evoluzione appare congelata (Fig.~\ref{glass_transition_plot} \DC{attenzione alle tilde, ti spiego}).
-	Questa è quella che \DC{costruzione debole} viene definita transizione vetrosa, a seguito della quale il liquido si trasforma in vetro. Non si tratta di una vera e propria trasformazione di fase termodinamica, in quanto microscopicamente si ha ancora a che fare con un liquido sottoraffreddato dall'elevata viscosità, ma macroscopicamente il materiale manifesta le proprietà di un solido.
-	La temperatura di transizione vetrosa $T_g$ dipende dalla velocità di raffreddamento e dal tempo di osservazione sperimentale preso come riferimento. In seguito \DC{soggetto?} verrà definita, seguendo la convenzione standard, come la temperatura alla quale la viscosità $\eta (T_g) = 10^{12}$ Pa s~\cite{cavagnaSupercooledLiquidsPedestrians2009}.
+	Un liquido si definisce "sottoraffreddato" quando viene portato al di sotto della sua temperatura di cristallizzazione $T_m$ senza far avvenire tale transizione di fase. Man mano che si diminuisce la temperatura, mantenendo il sistema in questo stato metastabile, la viscosità del liquido aumenta di diversi ordini di grandezza fino ad arrivare a uno stato in cui la dinamica molecolare rallenta drasticamente. Tale rallentamento è quantificato dal tempo di rilassamento strutturale (indicato con $\tau_\alpha$), ossia il tempo caratteristico impiegato dalle molecole del liquido per riorganizzarsi collettivamente e dissipare una perturbazione strutturale esterna (legato alla viscosità macroscopica tramite la relazione di Maxwell $\eta = G_\infty \tau_\alpha$, dove $G_\infty$ è il modulo di taglio a frequenze infinite~\cite{cavagnaSupercooledLiquidsPedestrians2009}). Quando $\tau_\alpha$ supera il tempo di osservazione sperimentale (tipicamente convenuto nell'ordine dei $10^3$~s), l'evoluzione del sistema appare congelata (vedi Fig.~\ref{glass_transition_plot}).
+	
+	Questo fenomeno prende il nome di transizione vetrosa, a seguito della quale il liquido si trasforma in vetro. Non si tratta di una vera e propria trasformazione di fase termodinamica, in quanto microscopicamente si ha ancora a che fare con un liquido sottoraffreddato dall'elevata viscosità, ma macroscopicamente il materiale manifesta le proprietà di un solido.
+	
+	La temperatura di transizione vetrosa $T_g$ dipende dalla velocità di raffreddamento e dal tempo di osservazione sperimentale preso come riferimento. Tale temperatura viene convenzionalmente definita come il valore termico al quale la viscosità raggiunge $\eta(T_g) = 10^{12}$~Pa~s~\cite{cavagnaSupercooledLiquidsPedestrians2009}.
 	
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[height=8cm]{entropy_temperature_plot.png}
-		\caption{Rappresentazione schematica dell'entropia di un liquido in funzione della temperatura \cite{cavagnaSupercooledLiquidsPedestrians2009}.}
+		\caption{Rappresentazione schematica dell'entropia di un liquido in funzione della temperatura~\cite{cavagnaSupercooledLiquidsPedestrians2009}.}
 		\label{glass_transition_plot}
 	\end{figure}
 	
-	L'andamento della viscosità in funzione della temperatura varia al variare \DC{!! a seconda} del liquido sotto esame come mostrato in Fig.~\ref{angell_plot}. \DC{Descrivere il grafico e dire che si chiama plot di Angell se no poi non `e chiaro} Più la curva si discosta da una retta nel plot di Angell e più l'indice di fragilità $m$ aumenta. Quest'ultimo è definito come la pendenza di $log(\eta)$ in funzione di $T/T_g$ nel punto $T/T_g = 1$~\cite{angellStrongFragileLiquids2013}. Liquidi con bassi valori di $m$ (come il $SiO_2$, che il componente principale del vetro delle finestre) vengono detti forti, mentre quelli aventi alti valori di $m$ fragili.
+	L'andamento della viscosità in funzione della temperatura varia a seconda del liquido sotto esame come mostrato nel cosiddetto grafico di Angell (Fig.~\ref{angell_plot}). In questa rappresentazione, la viscosità (o il tempo di rilassamento strutturale) è riportata in scala semilogaritmica in funzione della temperatura normalizzata inversa $T_g/T$, consentendo di confrontare sistemi caratterizzati da valori di $T_g$ molto differenti.
+	
+	Dal punto di vista della cinetica chimico-fisica, il flusso viscoso è governato dal superamento di barriere energetiche tra diversi stati conformazionali del paesaggio energetico (\textit{energy landscape})~\cite{debenedettiSupercooledLiquidsGlass2001}. L'energia necessaria al superamento di tali barriere prende il nome di energia di attivazione $E_a$, e definisce la dipendenza termica nei classici processi attivati secondo l'equazione di Arrhenius:
+	\begin{equation}
+		\eta(T) = \eta_\infty \exp\left( \frac{E_a}{k_B T} \right)
+	\end{equation}
+	dove $k_B$ è la costante di Boltzmann ed $\eta_\infty$ è il fattore pre-esponenziale~\cite{debenedettiSupercooledLiquidsGlass2001}.
+	
+	Nel grafico di Angell, un liquido che segue rigorosamente l'andamento arrheniano descrive una retta: sistemi di questo genere presentano un'energia di attivazione costante al variare della temperatura e vengono definiti liquidi "forti" (\textit{strong}). L'esempio classico è l'ossido di silicio ($\mathrm{SiO}_2$, il principale costituente del comune vetro delle finestre).
+	Al contrario, i liquidi detti "fragili" (\textit{fragile}) manifestano nel grafico una marcata concavità verso l'alto: in questi materiali la riorganizzazione cooperativa intermolecolare determina un'energia di attivazione efficace $E(T)$ che cresce in modo rapido e progressivo al diminuire della temperatura verso $T_g$~\cite{debenedettiSupercooledLiquidsGlass2001}. Tale scostamento dalla linearità è quantificato dall'indice di fragilità $m$, definito come la pendenza della curva a $T = T_g$:
+	
+	\begin{equation}
+		m = \left. \frac{\mathrm{d} \log_{10} (\eta(T))}{\mathrm{d}(T_g/T)} \right|_{T = T_g}
+	\end{equation}
+	
+	Valori bassi di $m$ (prossimi al limite teorico arrheniano $m \approx 16$) caratterizzano i liquidi forti, mentre valori elevati ($m > 100$) individuano liquidi fortemente fragili~\cite{bohmerNonexponentialRelaxationsStrong1993}.
 	
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[height=11cm]{angell_plot.png}
-		\caption{Plot di Angell - Andamento del logaritmo della viscosità in funzione dell'inverso della temperatura \cite{angellFormationGlassesLiquids1995}.}
+		\caption{Grafico di Angell - Andamento del logaritmo della viscosità in funzione della temperatura normalizzata inversa $T_g/T$~\cite{angellFormationGlassesLiquids1995}.}
 		\label{angell_plot}
 	\end{figure}
 	
-	L'intercetta del plot di Angell indica invece il valore teorico assegnato alla viscosità nel limite in cui la temperatura tende all'infinito. Di seguito verrà indicata con $\eta_\infty = \lim_{T->\infty} \eta(T)$. Tale valore, sebbene fisicamente poco rilevante, \DC{però se consideri $\tau(T)$ il senso fisico di $\tau_\infty$ est più interessante} viene introdotto in quanto usato come parametro dalle forme funzionali che cercano di interpolare l'andamento della viscosità dei liquidi sottoraffreddati in funzione della temperatura. \DC{Menzionare Anche Arrhenius, così puoi spiegare cosa ci si aspetta per un liquido strong}
-	Tra queste la più nota è la legge di VFT (Vogel-Fulcher-Tamman) \DC{dire che è fenomenologica ma si può ottenere da certi modelli teorici, quindi ha un fondamento fisico} \cite{fulcherAnalysisRecentMeasurements1925}:
+	L'intercetta del grafico di Angell per $T_g/T \to 0$ definisce invece il valore asintotico ad alta temperatura $\eta_\infty = \lim_{T \to \infty} \eta(T)$. Sebbene per la viscosità macroscopica tale grandezza sia un'estrapolazione al limite fluido, ragionando in termini di tempo di rilassamento il corrispettivo limite $\tau_\infty = \lim_{T \to \infty} \tau(T)$ acquisisce un chiaro significato fisico: esso corrisponde alla scala temporale dei moti vibrazionali microscopici reticolari o molecolari, dell'ordine di $10^{-14}$--$10^{-13}$~s~\cite{bohmerNonexponentialRelaxationsStrong1993}. Tale limite asintotico viene usato come parametro nelle formulazioni teoriche impiegate per interpolare la viscosità dei liquidi sottoraffreddati.
+	
+	Tra queste, il modello storicamente più noto è la legge di Vogel-Fulcher-Tammann (VFT)~\cite{fulcherAnalysisRecentMeasurements1925}. Introdotta originariamente come parametrizzazione fenomenologica, trova fondamento teorico nella teoria del volume libero e nella teoria termodinamica di Adam-Gibbs~\cite{cohenMolecularTransportLiquids1959, adamTemperatureDependenceCooperative1965}. Nella sua forma canonica, essa estende la relazione di Arrhenius prevedendo una divergenza della viscosità a una temperatura finita $T_0 > 0$:
 	\begin{equation}
-		\log_{10} \eta(T) = \log_{10} \eta_\infty + \frac{(12 - \log_{10} \eta_\infty)^2}{m (T/T_g - 1) + (12 - \log_{10} \eta_\infty)}
+		\eta(T) = \eta_\infty \exp \left( \frac{B}{T - T_0} \right)
 	\end{equation}
-	Un altra ancora è l'equazione MYEGA (Mauro–Yue–Ellison–Gupta–Allan), che risulta più accurata della prima a basse temperature \cite{mauroViscosityGlassformingLiquids2009}: \DC{dire l'idea fisica, ovvero che la barriera di attivazione dipende a sua volta da T secondo un esponenziale}
+	dove $B$ è un parametro termico proporzionale all'energia di attivazione e $T_0$ è la cosiddetta temperatura di Vogel (o temperatura ideale di transizione vetrosa), in corrispondenza della quale il volume libero (o l'entropia configurazionale) si annullerebbe teoricamente, bloccando ogni riarrangiamento strutturale (vedi Fig.~\ref{glass_transition_plot}).
+	
+	Un approccio alternativo, proposto per evitare la divergenza non fisica a temperatura finita della legge VFT, è l'equazione MYEGA~\cite{mauroViscosityGlassformingLiquids2009}, la quale offre una descrizione più accurata nell'intervallo a basse temperature. Il principio fisico del modello MYEGA risiede nel considerare esplicitamente una dipendenza esponenziale dell'energia di attivazione con la temperatura, associata al progressivo congelamento dei gradi di libertà configurazionali dei legami chimici:
 	\begin{equation}
-		\begin{aligned}
-			&\log_{10} \eta(T) \\
-			&= \log_{10} \eta_\infty + (12 - \log_{10} \eta_\infty) \frac{T_g}{T} \exp \left[ \left( \frac{m}{12 - \log_{10} \eta_\infty} - 1 \right) \left( \frac{T_g}{T} - 1 \right) \right]
-		\end{aligned}
+		\eta(T) = \eta_\infty \exp \left[ \frac{K}{T} \exp\left( \frac{C}{T} \right) \right]
 	\end{equation}
+	in cui $K$ e $C$ sono parametri legati, rispettivamente, alla barriera di attivazione ad alta temperatura e alla variazione di entalpia associata alla rottura dei vincoli cooperativi~\cite{mauroViscosityGlassformingLiquids2009}.
+	
+	Entrambe le equazioni possono essere convenientemente riscritte sostituendo le costanti fenomenologiche ($B, T_0$ e $K, C$) con i parametri fisicamente misurabili $T_g$ ed $m$. Tale riscrittura, particolarmente adatta alla procedura di fit numerico dei dati sperimentali, verrà illustrata per l'equazione MYEGA nella Sezione~\ref{sec:pipeline_myega}.
+
 
 	\section{Modelli data-driven}
-	\label{modell_datadriven}
+	\label{sec:modelli_datadriven}
 	
-%	Perché ci interessa tutto questo?? Discorso introduttivo di Cassar...
-%	Features in input- output e perché vogliamo fare questo fit
-%	svantaggi e vantaggi, approcci
+	I modelli \textit{data-driven} vengono costruiti calibrando algoritmi statistici e di \textit{machine learning} direttamente sui dati sperimentali o computazionali disponibili, con lo scopo primario di formulare regressioni e predizioni accurate. In questo paradigma, la qualità, la consistenza e l'estensione del dataset di partenza costituiscono fattori determinanti: eventuali rumori sperimentali o sbilanciamenti nella distribuzione dei campioni influiscono infatti in modo critico sull'accuratezza predittiva e sulla capacità di generalizzazione del modello su composizioni non note~\cite{torraChapter4Data2023}.
 	
-	I modelli data-driven sono costruiti, partendo dai dati, utilizzando diversi metodi di machine learning \DC{direi piuttosto fittando i dati tramite metodi di machine learning}. Solitamente \DC{soggetto} vengono realizzati per effettuare classificazioni, regressioni o predizioni. Essendo i dati una loro componente fondamentale, la qualità di questi ultimi influisce pesantemente sulle loro performance \DC{performance qui non è chiaro, vuoi dire accuratezza penso o qualcosa del genere}, per cui è fondamentale assicurarsi della buona qualità dei dati di partenza~\cite{torraChapter4Data2023}.
+	Nel contesto della fisica dei liquidi sottoraffreddati e della scienza dei vetri, la dipendenza della viscosità dalla temperatura rappresenta la grandezza fondamentale per il controllo dei processi industriali di formatura, ricottura e lavorazione termica. Tuttavia, la caratterizzazione sperimentale della viscosità lungo l'intero intervallo termico (che spazia dal liquido fuso al vetro congelato per oltre dodici ordini di grandezza) è un'operazione complessa, onerosa e lenta. L'impiego di modelli predittivi affidabili, capaci di stimare la curva $\eta(T)$ a partire dalla semplice composizione chimica, permette quindi di accelerare lo \textit{screening} e ridurre drasticamente i tempi e i costi di sviluppo di nuove famiglie di materiali vetrosi~\cite{mauroGrandChallengesGlass2014}.
 	
-	Nel contesto dei liquidi sottoraffreddati, nello specifico nel caso dei liquidi formatori di vetro, la dipendenza della viscosità dalla temperatura viene utilizzata per regolare le variabili di processo \DC{di processo?} nella produzione dei vetri. Modelli predittivi affidabili possono quindi aiutare a aumentare la velocità \DC{di cosa?} e ridurre i costi di sviluppo di nuovi materiali~\cite{cassarViscNetNeuralNetwork2021}.
+	Tra le tecniche di \textit{machine learning} maggiormente diffuse spiccano le reti neurali (NN), in particolare le reti \textit{feedforward} (o percettroni multistrato, descritti nel Paragrafo~\ref{sec:reti_neurali}). Le reti neurali si rivelano estremamente efficaci nel catturare correlazioni complesse e fortemente non lineari tra le variabili di ingresso (\textit{features}, quali le frazioni molari dei costituenti) e le risposte desiderate (\textit{targets}). Il limite principale di questo approccio risiede tuttavia nella scarsa interpretabilità dei meccanismi interni: a causa dell'elevatissimo numero di parametri e delle trasformazioni non lineari stratificate, tali modelli operano come vere e proprie "scatole nere" (\textit{black-box}). Sebbene sia possibile ricorrere a metodi di interpretabilità \textit{post-hoc}, come l'analisi SHAP (\textit{SHapley Additive exPlanations})~\cite{lundbergUnifiedApproachInterpreting2017}, queste procedure risultano computazionalmente gravose e forniscono spiegazioni puramente euristiche o locali, lasciando opaca la reale comprensione fisica del fenomeno.
 	
-	I metodi di machine learning più utilizzati si basano sulle reti neurali (NN). Queste sono particolarmente abili a trovare pattern e dipendenze non lineari tra i dati in input (features) e quelli in output (targets). \DC{metti in italico le parole inglesi?}
-	Il metodo più diffuso si basa sull'utilizzo delle feedforward NN (vedi Paragrafo \ref{reti_neurali}).
+	Una strategia promettente per superare questa limitazione consiste nell'integrazione di conoscenza fisica a priori all'interno dell'architettura di apprendimento (\textit{physics-informed data-driven modeling}). Un esempio rilevante in questo ambito è il modello ViscNet, sviluppato da Cassar~\cite{cassarViscNetNeuralNetwork2021} per lo studio della viscosità in vetri e liquidi a base di ossidi. ViscNet adotta un approccio "scatola grigia" (\textit{gray-box}) strutturato su due livelli concettuali:
+	\begin{enumerate}
+		\item La rete neurale non viene addestrata a predire direttamente il valore scalare della viscosità a temperature arbitrarie, bensì a stimare i parametri termodinamici e cinetici dell'equazione MYEGA (nello specifico la temperatura di transizione vetrosa $T_g$, l'indice di fragilità $m$ e il limite ad alta temperatura $\eta_\infty$).
+		\item Una volta stimati tali parametri, la viscosità $\eta(T)$ a qualsiasi temperatura di interesse viene calcolata deterministicamente inserendo i valori predetti nella formulazione analitica di MYEGA.
+	\end{enumerate}
+	Questo schema garantisce due vantaggi decisivi rispetto a un predittore puramente \textit{black-box}. In primo luogo, preserva i vincoli fisici e le proprietà asintotiche del liquido garantendo così un'elevata accuratezza anche al di fuori dell'intervallo termico coperto dai dati di addestramento. In secondo luogo, il modello restituisce direttamente grandezze dotate di un significato termodinamico e cinetico fondamentale ($T_g$ ed $m$), consentendo di caratterizzare la stabilità termica e la fragilità della specifica composizione senza dover ricorrere a un successivo fit numerico.
 	
-	Il problema di questo approccio, tuttavia, risiede nella bassa interpretabilità dei risultati ottenuti. Proprio per questo motivo questi modelli vengono spesso considerati delle "black-box". Si possono ricavare alcune informazioni sul loro funzionamento interno tramite analisi computazionalmente impegnative come la SHAP (SHapley Additive exPlanations) \DC{referenza}, tuttavia tale procedura è in grado di fornire solo informazioni indicative e non sempre accurate sull'interpretabilità delle predizioni. 
-	
-	Un metodo interessante per migliorare l'interpretabilità di questo tipo di modelli è quello adottato da Cassar nella realizzazione di ViscNet~\autocite{cassarViscNetNeuralNetwork2021}. \DC{cosa è viscnet?} Tale modello mira a studiare con un approccio "gray-box" la dipendenza della viscosità dalla temperatura dei liquidi ossidici \DC{ossidi?} formatori di vetro. Invece di predire direttamente la viscosità, la rete neurale predice i parametri dell'equazione MYEGA. \DC{qui c'è la solito confusione riguardo predizione, andrebbe chiarito} Grazie a questi risulta poi possibile calcolare la viscosità a qualsiasi temperatura di interesse sfruttando il vantaggio delle buone capacità di estrapolazione intrinseche dell'equazione.
-	Cassar inoltre introduce uno step preliminare di pre-processing dei dati che mira a estrarre features di alto livello su cui allenare il modello al posto di fornirgli direttamente i dati grezzi. Uno schema della pipeline utilizzata da ViscNet è mostrato in Fig.~\ref{flowchart_viscnet}.
+	Per ottimizzare l'addestramento, il modello include inoltre una fase preliminare di pre-elaborazione (\textit{feature engineering}), volta a convertire le percentuali in moli dei singoli ossidi in descrittori chimico-fisici di livello superiore (vedi Sez.~\ref{sec:feature_extraction}). Lo schema architetturale complessivo di ViscNet è riassunto nella Fig.~\ref{fig:flowchart_viscnet}.
 	
 	\begin{figure}[h!]
-	\centering
-	\includegraphics[height=7cm]{flowchart_viscnet.png}
-	\caption{Flowchart della pipline usata in ViscNet \cite{cassarViscNetNeuralNetwork2021}.}
-	\label{flowchart_viscnet}
+		\centering
+		\includegraphics[height=7cm]{flowchart_viscnet.png}
+		\caption{Schema a blocchi (\textit{flowchart}) della pipeline implementata nel modello ViscNet~\cite{cassarViscNetNeuralNetwork2021}.}
+		\label{fig:flowchart_viscnet}
 	\end{figure}
 	
-	Un altro vantaggio di questo approccio "gray-box" rispetto a un approccio "black-box", è che i parametri di viscosità possono essere previsti individualmente. \DC{non capisco bene qui...} Di conseguenza il modello prevede non solo la dipendenza della viscosità dalla temperatura, ma anche l'indice di fragilità del liquido e la sua temperatura di transizione vetrosa. \DC{ok, ma in realtà si può fare comunque no?}
-	
 	\section{Perché un modello lineare?}
-	Sebbene l'approccio gray-box descritto nella Sezione~\ref{modell_datadriven} fornisca maggiori informazioni rispetto ad un approccio puramente black-box, il problema intrinseco sull'interpretabilità della NN permane. \DC{perchè?}
-	Per tale ragione, nello svolgimento di questo lavoro di tesi, si è scelto di replicare l'analisi fatta da Cassar utilizzando un modello lineare. Quest'ultimo infatti, in linea di principio, offre totale trasparenza sui meccanismi interni che collegano features e targets. \DC{referenze} Naturalmente questo è inevitabilmente correlato a una perdita di performance \DC{anche qui chiariamo meglio} siccome le dipendenze fisiche tra i dati spesso non sono lineari. \DC{però con tanti dati alle volte si compensa... forse si può aggiungere una frase} In questo modo però, tramite lo studio dei pesi interni del modello lineare, risulta possibile ricavare informazioni utili riguardanti la fisica che sta dietro ai risultati ottenuti.
-	%TODO:	spiegare meglio la Filosofia dello stuido?
+	\label{sec:perche_modello_lineare}
+	
+	Nonostante i vantaggi offerti dall'approccio \textit{gray-box} descritto nel Paragrafo~\ref{sec:modelli_datadriven}, il problema dell'interpretabilità non può dirsi del tutto risolto. Sebbene l'output sia vincolato a una funzione analitica rigorosa (l'equazione MYEGA), il legame interno che mappa i descrittori composizionali nei parametri fisici ($T_g, m, \eta_\infty$) rimane racchiuso nella struttura opaca e ad alta dimensionalità della rete neurale.
+	
+	Per tale motivo, in questo lavoro di tesi si è scelto di riformulare il problema sostituendo l'architettura neurale non lineare con un modello di regressione lineare. I modelli lineari offrono una trasparenza analitica intrinseca: ciascun coefficiente di regressione quantifica in modo immediato e non ambiguo l'influenza marginale del corrispondente descrittore chimico sulla proprietà vetrosa considerata~\cite{rudinStopExplainingBlack2019}.
+	
+	In linea di principio, il passaggio a un'architettura lineare comporta un rischio di sottostima della complessità (\textit{underfitting}), poiché le interazioni tra specie atomiche all'interno di un fuso vetroso sono intrinsecamente cooperative e non lineari. Tuttavia, recenti indagini teoriche hanno mostrato come la disponibilità di ampi dataset composizionali, unita a un'accurata selezione di descrittori fisicamente informati, consenta a modelli lineari opportunamente regolarizzati di raggiungere un'accuratezza predittiva paragonabile a quella delle reti neurali~\cite{sharmaInterpretabilityLinearRegression2026}. Tale evidenza dimostra che una rappresentazione accurata dello spazio delle configurazioni può compensare la rigidità funzionale del regressore lineare, unendo al minimo costo computazionale il beneficio di una lettura fisica trasparente e diretta dei parametri stimati.
+	
 	
 	\subsection{Confronto tra reti neurali e regressione lineare}
-	\label{reti_neurali}
-	%	più facili da intepretari, sono più seplici, in ambito fisico si prestano ad un intepretazione tra features in input e output
+	\label{sec:reti_neurali}
 	
-	Neural network is a general term for a group of machine
-	learning algorithms used for pattern recognition, which is
-	performed by an assortment of interconnected computa-
-	tional units called neurons. In materials science, NNs can
-	be applied in many types of problems and are often used
-	for their universal regressor capabilities. This work focuses
-	on feedforward multilayer perceptron NNs, one of the most
-	simple architectures of NNs.
+	Le reti neurali (NN) costituiscono una classe di algoritmi di apprendimento automatico fondati su aggregati di unità computazionali interconnesse, denominate neuroni. Tra le varie configurazioni, l'architettura canonica più diffusa è il percettrone multistrato \textit{feedforward} (FF-MLP, Fig.~\ref{fig:neural_network}). In tale struttura, i dati fluiscono in modo unidirezionale dal livello di ingresso (\textit{input layer}) a quello di uscita (\textit{output layer}) attraverso uno o più livelli intermedi (\textit{hidden layers}). Grazie alla presenza degli strati nascosti e delle composizioni non lineari, le reti FF-MLP agiscono come approssimatori universali, capaci in linea di principio di interpolare qualunque funzione continua arbitrariamente complessa~\cite{hornikMultilayerFeedforwardNetworks1989}.
 	
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[height=6.5cm]{neural_network_ffmlp.png}
+		\caption{Architettura di una rete neurale \textit{feedforward} multistrato (FF-MLP) con due strati nascosti~\cite{nielsenNeuralNetworksDeep2015}.}
+		\label{fig:neural_network}
+	\end{figure}
+	
+	L'elemento fondamentale di elaborazione è il singolo percettrone (Fig.~\ref{fig:perceptron}), il quale calcola una combinazione lineare pesata degli ingressi $x_i$, vi somma un termine costante $w_0$ (denominato \textit{bias}) e trasforma il risultato attraverso una funzione di attivazione $\sigma(\cdot)$ generalmente non lineare (come la sigmoide, la tangente iperbolica o la funzione ReLU)~\cite{nielsenNeuralNetworksDeep2015}:
+	\begin{equation}
+		y = \sigma \left( w_0 + \sum_{i=1}^N w_i x_i \right)
+	\end{equation}
+	È proprio la funzione di attivazione non lineare a conferire alle reti neurali la capacità di modellare relazioni chimico-fisiche complesse tra composizione e proprietà.
+		
+
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[height=3cm]{perceptron.png}
-		\caption{Rappresentazione schematica di un Perceptron a 3 input \cite{nielsenNeuralNetworksDeep2015}.}
-		\label{perceptron}
+		\caption{Rappresentazione schematica di un singolo neurone (percettrone) con tre ingressi e funzione di attivazione~\cite{nielsenNeuralNetworksDeep2015}.}
+		\label{fig:perceptron}
 	\end{figure}
 	
-	\begin{figure}[h!]
-		\centering
-		\includegraphics[height=7cm]{neural_network_ffmlp.png}
-		\caption{Rappresentazione schematica di una rete neurale feedforward \cite{nielsenNeuralNetworksDeep2015}.}
-		\label{neural_network_fig}
-	\end{figure}
-	
-	!! Da citare la funzione di attivazione che nella regressione lineare non c'è
-	
-	La regressione lineare non è altro che un perceptron senza funzione di attivazione. Se ci sono più output ci sono più perceptron, ma a differenza di una rete neurale la profondità è sempre 1
-	
-	Da scrivere equazione che descrive modello lineare multidimensionale e spiegare cosa significa il parametro 0
+	In questa prospettiva, la regressione lineare multivariata può essere interpretata come un singolo percettrone privo di funzione di attivazione non lineare (ossia dotato di funzione di attivazione identità, $\sigma(z) = z$) e con una profondità strutturale rigorosamente pari a $1$, ovvero con la totale assenza di strati nascosti. Nel caso in cui il problema richieda la predizione di più grandezze contemporaneamente (quali i parametri $T_g$, $m$ ed $\eta_\infty$), l'architettura lineare si riduce a un insieme di percettroni indipendenti posti in parallelo. Per una singola variabile target $y$, il modello assume la forma analitica:
+	\begin{equation}
+		\label{eq:linear_regression}
+		y = w_0 + \sum_{i=1}^M w_i x_i = w_0 + \mathbf{w}^T \mathbf{x}
+	\end{equation}
+	dove:
+	\begin{itemize}
+		\item $w_0$ rappresenta l'intercetta (o \textit{bias}), che identifica il valore atteso della risposta $y$ nel caso ideale in cui tutti i descrittori $x_i$ siano nulli;
+		\item $w_i$ sono i coefficienti di regressione (o pesi), ciascuno dei quali quantifica l'effetto marginale isolato della rispettiva \textit{feature} $x_i$ sulla risposta finale: a differenza di quanto accade nei pesi interni stratificati di una rete neurale, ogni $w_i$ possiede un'interpretazione fisica trasparente e diretta.
+	\end{itemize}
 	
 	
 	
-	\subsection{Il problema della multicollinerità}
-	La collinearità indica quando due variabili indipendenti in un'analisi di regressione sono esse stesse correlate; la multicollinearità significa quando più di due variabili indipendenti sono correlate. \cite{kavlakogluCheCoseMulticollinearita2025}
 	
-	\subsection{Ridge Regression}
-	In particolare è stata utilizzata una ridge regression durante il corso dell'analisi per poter limitare gli effetti della mulitcollinearità tra le features che ha come conseguenza la perdita del senso fisico dei pesi del modello. \cite{sharmaInterpretabilityLinearRegression2026}
-	Spiegare perché...
+	\section{Il problema della multicollinearità}
+	\label{sec:multicollinearita}
 	
+	Nel modello lineare introdotto nell'Eq.~\eqref{eq:linear_regression}, l'approccio canonico per determinare il vettore dei pesi $\mathbf{w}$ si basa sulla stima dei minimi quadrati (OLS, \textit{Ordinary Least Squares}). Assumendo descrittori e target standardizzati a media nulla e varianza unitaria, la soluzione analitica si esprime in forma chiusa come:
+	\begin{equation}
+		\hat{\mathbf{w}}_{\text{OLS}} = (X^T X)^{-1} X^T \mathbf{y} = C^{-1} R[X, y]
+	\end{equation}
+	dove $X$ è la matrice dei dati sperimentali di dimensione $N_s \times M$ ($N_s$ è il numero di campioni mentre $M$ è il numero di \textit{features}), $C = \frac{1}{N_s} X^T X$ è la matrice di correlazione empirica tra le variabili predittive e $R[X, y]$ è il vettore dei coefficienti di correlazione di Pearson tra ciascuna \textit{feature} e la grandezza target~\cite{sharmaInterpretabilityLinearRegression2026}.
+	
+	Nel caso ideale in cui tutti i descrittori fossero mutuamente ortogonali, la matrice di correlazione coinciderebbe con la matrice identità ($C = I$) e ciascun peso $\hat{w}_i$ equivarrebbe esattamente al coefficiente univariato $R[x_i, y]$. Tuttavia, nello studio dei liquidi sottoraffreddati, la presenza di interdipendenze tra le variabili (\textbf{multicollinearità}) rappresenta una condizione intrinseca e inevitabile. Tale patologia trae origine da due vincoli fisici fondamentali:
+	\begin{enumerate}
+		\item Il vincolo composizionale di chiusura a somma unitaria ($\sum_i x_i = 100\%$ molare), che introduce una dipendenza lineare esatta nei dati chimici di partenza;
+		\item L'estrazione ad alta dimensionalità dei descrittori chimico-fisici (vedi Sec.~\ref{sec:feature_extraction}), i quali ereditano le forti correlazioni reciproche delle proprietà della tavola periodica (ad esempio tra raggi ionici, volumi atomici, elettronegatività e parametri di valenza).
+	\end{enumerate}
+	
+	La quasi-dipendenza lineare tra le colonne della matrice $X$ rende $C$ fortemente mal condizionata: l'autovalore minimo tende a zero e di conseguenza l'operazione di inversione matriciale $C^{-1}$ diviene numericamente instabile e vulnerabile a minime perturbazioni nei dati.
+	Come evidenziato da Sharma et al.~\cite{sharmaInterpretabilityLinearRegression2026}, tale instabilità distrugge l'interpretabilità dei pesi OLS: variabili contigue o fisicamente simili tendono ad assumere coefficienti divergenti di segno opposto che si elidono a vicenda, generando un profilo disordinato e oscillatorio. Il valore e il segno di $\hat{w}_i$ smettono dunque di riflettere l'effettiva importanza del descrittore nel fenomeno del flusso viscoso.
+	
+	Per superare queste degenerazioni computazionali e investigare in modo rigoroso la frontiera tra accuratezza predittiva e trasparenza fenomenologica, sono state analizzate quattro distinte strategie metodologiche.
+	
+	
+	\subsection{Regressione Ridge}
+	\label{sec:ridge_intro}
+	
+	La regressione Ridge (o regolarizzazione $L_2$) interviene direttamente sull'instabilità di inversione introducendo una penalizzazione quadratica sulla norma euclidea dei coefficienti \cite{hoerlRidgeRegressionBiased1970}:
+	\begin{equation}
+		\mathcal{L}_{\text{Ridge}}(\mathbf{w}) = \|\mathbf{y} - X \mathbf{w}\|_2^2 + \alpha \|\mathbf{w}\|_2^2
+	\end{equation}
+	dove $\alpha > 0$ è il parametro di regolarizzazione. La soluzione analitica diviene:
+	\begin{equation}
+		\hat{\mathbf{w}}_{\text{Ridge}} = (X^T X + \alpha I)^{-1} X^T \mathbf{y} = (C + \alpha I)^{-1} R[X, y]
+	\end{equation}
+	L'aggiunta della costante scalare $\alpha$ lungo la diagonale principale trasla uniformemente tutti gli autovalori di $C$, garantendo che $(C + \alpha I)$ sia strettamente definita positiva. Ciò sopprime alla radice le oscillazioni spurie e l'instabilità computazionale tipica di OLS.
+	
+	\subsection{Filtraggio VIF}
+	\label{sec:vif_intro}
+	
+	Una via alternativa per preservare la formulazione OLS canonica consiste nell'eliminare preventivamente le variabili ridondanti tramite il fattore di inflazione della varianza (\textit{Variance Inflation Factor}, VIF)~\cite{marquardtGeneralizedInversesRidge1970}. Per ciascun descrittore $x_j$, il VIF misura l'incremento di varianza del coefficiente associato dovuto alla collinearità con le restanti $M-1$ variabili:
+	\begin{equation}
+		\text{VIF}_j = \frac{1}{1 - R_j^2}
+	\end{equation}
+	dove $R_j^2$ è il coefficiente di determinazione ottenuto regredendo $x_j$ su tutti gli altri descrittori (vedi Appendice~\ref{app:metrics}).
+	
+	Seguendo il protocollo di selezione iterativa adottato anche per ViscNet~\cite{cassarViscNetNeuralNetwork2021}, a ogni ciclo viene calcolato il VIF per tutte le variabili disponibili e viene eliminata la \textit{feature} associata al valore massimo qualora questo superi la soglia convenzionale di tolleranza $\text{VIF} > 10$ (corrispondente a $R_j^2 > 0.90$). La procedura termina quando tutte le variabili superstiti soddisfano la condizione $\text{VIF} \le 10$.
+	
+	\subsection{Regressione Elastic Net}
+	\label{sec:elastic_net_intro}
+	
+	Per coniugare la stabilità numerica nei confronti della collinearità con una selezione automatica delle variabili, si ricorre alla regressione Elastic Net~\cite{sharmaInterpretabilityLinearRegression2026}. La funzione di perdita include contemporaneamente una penalizzazione $L_1$ (Lasso)~\cite{hastieLinearMethodsRegression2009} e una penalizzazione quadratica $L_2$ (Ridge):
+	\begin{equation}
+		\mathcal{L}_{\text{EN}}(\mathbf{w}) = \|\mathbf{y} - X \mathbf{w}\|_2^2 + \lambda_1 \|\mathbf{w}\|_1 + \frac{\lambda_2}{2} \|\mathbf{w}\|_2^2
+	\end{equation}
+	oppure, introducendo la parametrizzazione $\alpha = \lambda_1 + \lambda_2$ e il rapporto di miscelazione $\beta = \lambda_1 / (\lambda_1 + \lambda_2) \in [0, 1]$~\cite{sharmaInterpretabilityLinearRegression2026}:
+	\begin{equation}
+		\mathcal{L}_{\text{EN}}(\mathbf{w}) = \frac{1}{2N} \|\mathbf{y} - X \mathbf{w}\|_2^2 + \alpha \left( \beta \sum_{i=1}^M |w_i| + \frac{1-\beta}{2} \sum_{i=1}^M w_i^2 \right)
+	\end{equation}
+	dove i casi limite $\beta = 0$ e $\beta = 1$ corrispondono rispettivamente alla regressione Ridge e alla pura regressione Lasso.
+	
+	La regolarizzazione $L_1$ possiede la proprietà geometrica di contrarre esattamente a zero i coefficienti dei descrittori non informativi o ridondanti, inducendo una soluzione intrinsecamente sparsa. A differenza del Lasso puro, che in presenza di variabili collineari tende a selezionarne arbitrariamente una sola trascurando le altre, la presenza del termine $L_2$ stabilizza il percorso di regolarizzazione. Questo permette di selezionare gruppi compatti di variabili correlate senza incorrere in instabilità~\cite{hastieLinearMethodsRegression2009}.
+	
+	\subsection{Regressione su Componenti Principali (PCR)}
+	\label{sec:pcr_intro}
+	
+	La regressione su componenti principali (\textit{Principal Component Regression}, PCR) affronta la multicollinearità ridefinendo lo spazio dei predittori su una base intrinsecamente ortogonale mediante l'analisi delle componenti principali (PCA)~\cite{sharmaInterpretabilityLinearRegression2026}. La matrice di correlazione $C$ viene diagonalizzata:
+	\begin{equation}
+		C = U \Lambda U^T
+	\end{equation}
+	dove $U = [\mathbf{u}^{(1)}, \dots, \mathbf{u}^{(M)}]$ è la matrice ortogonale degli autovettori mentre $\Lambda = \text{diag}(\lambda^{(1)}, \dots, \lambda^{(M)})$ contiene gli autovalori ordinati in senso decrescente. Le nuove coordinate non correlate si ottengono proiettando i dati originali sulla base degli autovettori: $X' = X U$~\cite{sharmaInterpretabilityLinearRegression2026}.
+	
+	Normalizzando ciascuna coordinata rispetto alla deviazione standard ($\tilde{X}^{(f)} = X'^{(f)}/\sqrt{\lambda^{(f)}}$), la regressione lineare condotta sull'intero insieme delle componenti principali restituisce pesi che coincidono esattamente con la correlazione univariata di ciascuna componente con il target:
+	\begin{equation}
+		\hat{y} = \sum_{f=1}^M R[\tilde{X}^{(f)}, y] \tilde{X}^{(f)}
+	\end{equation}
+	eliminando ogni interferenza di collinearità per costruzione.
+	
+	La riduzione dimensionale si ottiene trattenendo un sottospazio di $P \ll M$ componenti. Come dimostrato da Sharma et al.~\cite{sharmaInterpretabilityLinearRegression2026}, nei sistemi vetrosi l'approccio non supervisionato classico (trattenere le componenti con il valore più alto di $\lambda$, ossia che spiegano la massima varianza strutturale) non è ottimale, poiché le prime componenti spesso non contengono informazione correlata alla risposta dinamica. Risulta quindi necessario adottare uno schema di selezione supervisionato, ordinando e selezionando le componenti in base al valore assoluto di correlazione $|R[\tilde{X}^{(f)}, y]|$ (\textbf{Supervised Principal Component Regression (SPCR)}). Questo approccio consente di quantificare in modo diretto il compromesso fra il contenimento della complessità dimensionale e la preservazione della precisione sulla viscosità.
+
 \end{document}

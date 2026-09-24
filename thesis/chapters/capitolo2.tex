@@ -1,8 +1,97 @@
 \documentclass[../main.tex]{subfiles}
 
 \begin{document}
+	
 	\chapter{Metodi e dataset}
-	Origine dei dati
-	Preparazione preliminare
-	Estrazione e selezione delle features (multicollinearità)
+	\label{ch:metodi_dataset}
+
+	\section{Il dataset originale}
+	\label{sec:dataset_originale}
+	I dati viscosimetrici impiegati in questo studio derivano dal database pubblico SciGlass (\url{https://github.com/epam/SciGlass}), focalizzandosi esclusivamente sui liquidi formatori di vetro a base di ossidi. A causa della difficoltà di reperire direttamente i dati, si è assunto come punto di partenza il dataset già estratto, deduplicato e pulito da Cassar~\cite{cassarViscNetNeuralNetwork2021}. Tale procedura preliminare prevedeva l'esclusione di misurazioni estreme (viscosità superiori a $10^{12}$ Pa$\cdot$s o inferiori a $10^{-5}$ Pa$\cdot$s) e la rimozione di liquidi privi di un numero sufficiente di misurazioni nelle regioni di alta e bassa viscosità.
+	
+	Tuttavia, l'approccio di deduplicazione adottato originariamente presenta una criticità metodologica non trascurabile. La procedura raggruppa i campioni aventi la medesima composizione chimica nominale andando a sovrapporre e fondere assieme dati ottenuti da fonti sperimentali diverse, le quali possono aver utilizzato protocolli di fusione, velocità di raffreddamento o tecniche di misurazione disomogenee. Di conseguenza, per alcuni liquidi si assiste a una dispersione artificiale dei dati che genera difficoltà in fase di \textit{fitting}, introducendo una varianza che non deriva dalla termodinamica del sistema, bensì dall'incompatibilità intrinseca degli storici sperimentali accorpati (vedi Fig.~[\dots]).
+	
+	\subsection*{Suddivisione del dataset}
+	\label{sec:data_split}
+	In seguito alla pulizia e deduplicazione dei dati di SciGlass fatta da Cassar, il dataset finale utilizzabile è risultato composto da 847 differenti liquidi a base di ossido, per un totale di 17584 punti dati viscosimetrici misurati~\cite{cassarViscNetNeuralNetwork2021}. 
+	
+	La strategia di partizionamento dei dati riveste un ruolo importante per la validazione dei modelli. Per questo lavoro si è scelto di mantenere l'esatto \textit{split} dei dati definito in precedenza per ViscNet permettendo di svolgere un confronto prestazionale diretto con i risultati ottenuti dai modelli lineari analizzati. Dagli 847 liquidi disponibili, quindi, un sottoinsieme di 85 liquidi è stato selezionato per formare l'\textit{unseen test dataset}. Le misurazioni appartenenti a questi 85 liquidi non sono mai state esposte ai modelli durante le fasi di ottimizzazione degli iperparametri o di addestramento.
+	
+	La Figura \ref{fig:dataset_distribution} illustra la distribuzione statistica dell'intero dataset e la proporzione rappresentata dal \textit{test set} di 85 liquidi, evidenziando la distribuzione per numero di componenti, i valori di viscosità esplorati e la presenza dei singoli costituenti chimici.
+	
+	\begin{figure}[h!]
+		\centering
+		% Sotto-figura (a)
+		\begin{subfigure}[b]{0.495\textwidth}
+			\centering \includegraphics[width=\textwidth]{numero_composti.png}
+			\caption{Numero di composti nei liquidi.}
+			\label{fig:dist_compounds}
+		\end{subfigure}
+		\hfill
+		% Sotto-figura (b)
+		\begin{subfigure}[b]{0.49\textwidth}
+			\centering \includegraphics[width=\textwidth]{valori_viscosità.png}
+			\caption{Distribuzione dei valori di viscosità.}
+			\label{fig:dist_viscosity}
+		\end{subfigure}
+		
+		% Sotto-figura (c)
+		\begin{subfigure}[b]{\textwidth}
+			\centering \includegraphics[width=\textwidth]{istogramma_composti.png}
+			\caption{Numero di punti dati per singolo costituente chimico.}
+			\label{fig:dist_elements}
+		\end{subfigure}
+		
+		\caption{Analisi descrittiva del dataset globale (blu) e del sottoinsieme riservato al \textit{test set} (arancione). I dati mantengono le suddivisioni definite da Cassar per consentire un confronto omogeneo tra modelli diversi.~\cite{cassarViscNetNeuralNetwork2021}}
+		\label{fig:dataset_distribution}
+	\end{figure}
+	
+	\section{Estrazione delle features}
+	\label{sec:feature_extraction}
+	Per superare i limiti predittivi legati all'utilizzo delle sole frazioni molari, si è proceduto a un'approfondita ingegnerizzazione delle \textit{features} (\textit{feature extraction}), trasformando il dominio composizionale in un dominio di proprietà chimico-fisiche~\cite{cassarViscNetNeuralNetwork2021}.
+	
+	Matematicamente, definendo $\boldsymbol{C}$ come il vettore delle frazioni molari atomiche degli elementi presenti nel liquido e $\boldsymbol{S}$ come il vettore di una specifica proprietà chimica per ciascun elemento (es. raggio atomico, elettronegatività, volume), si calcolano le proprietà pesate ($\boldsymbol{W}$) e assolute ($\boldsymbol{A}$) attraverso il prodotto matriciale:
+	\begin{equation}
+		\boldsymbol{W} = \boldsymbol{C}\boldsymbol{S}^T
+	\end{equation}
+	e
+	\begin{equation}
+		\boldsymbol{A} = \lceil \boldsymbol{C} \rceil \boldsymbol{S}^T
+	\end{equation}
+	dove l'operazione di \textit{ceiling} $\lceil \boldsymbol{C} \rceil$ valuta esclusivamente la presenza o assenza dell'elemento, ignorandone la quantità relativa. A questi vettori vengono successivamente applicate funzioni di aggregazione statistiche (somma, media, deviazione standard, minimo e massimo) per estrarre il singolo descrittore scalare del liquido. Applicando tale logica a un esteso catalogo di proprietà atomiche~\cite{cassarViscNetNeuralNetwork2021} si è generato uno spazio ad alta dimensionalità composto da 560 \textit{features} iniziali.
+	
+	\section{La pipeline di machine learning}
+	\label{sec:pipeline_myega}
+	La struttura di base del sistema predittivo adotta l'approccio \textit{gray-box} usato da Cassar per ViscNet, che è stato descritto alla fine della Sezione~\ref{sec:modelli_datadriven}. E possibile visualizzarne una rappresentazione schematica nella Fig.~\ref{fig:flowchart_viscnet}.
+	Il distacco metodologico principale di questa tesi rispetto al lavoro di riferimento risiede nel motore predittivo. Laddove la pipeline originale impiega una rete neurale (ViscNet) a due livelli nascosti, il presente lavoro sostituisce tale architettura con modelli matematici strettamente lineari (Ridge, Elastic Net, VIF+OLS, PCR e SPCR).
+	I modelli sono stati quindi addestrati per prevedere i tre parametri fondamentali dell'equazione di viscosità MYEGA. Una volta ottenuti tali parametri, la viscosità $\eta$ a qualsiasi temperatura assoluta $T$ viene calcolata analiticamente tramite la seguente formulazione~\cite{mauroViscosityGlassformingLiquids2009}:
+	
+	\begin{equation}
+		\begin{aligned}
+			&\log_{10} \eta(T) \\
+			&= \log_{10} \eta_\infty + (12 - \log_{10} \eta_\infty) \frac{T_g}{T} \exp \left[ \left( \frac{m}{12 - \log_{10} \eta_\infty} - 1 \right) \left( \frac{T_g}{T} - 1 \right) \right]
+		\end{aligned}
+		\label{eq:myega}
+	\end{equation}
+	dove $T_g$ è la temperatura di transizione vetrosa, $m$ l'indice di fragilità e $\log_{10}\eta_\infty$ la viscosità asintotica in scala logaritmica (per maggiori dettagli vedere la Sez.~\ref{sec:liquidi_sottoraffreddati}).
+	
+	Lo scopo è quello di testare se, a fronte della medesima base dati e della medesima equazione MYEGA, uno spazio vettoriale lineare sia in grado di eguagliare la potenza predittiva del \textit{deep learning} garantendo al contempo una lettura fisica e trasparente dei pesi assegnati.
+	
+%	\subsection{Filtraggio e riduzione dello spazio vettoriale}
+%	Per i modelli che richiedono la rimozione a priori della ridondanza informativa (come VIF+OLS), il blocco delle 560 \textit{features} è stato sottoposto a procedura di pulizia statistica. A differenza della sequenza indicata nella Sez.~\ref{sec:vif_intro}, si è optato per la seguente gerarchia di filtraggio:
+%	\begin{enumerate}
+%		\item \textbf{Filtro di Varianza:} Si è calcolata la deviazione standard per tutte le \textit{features} estratte. Tutti i descrittori aventi una deviazione standard inferiore a $10^{-3}$ sono stati preventivamente eliminati. Questa inversione procedurale assicura la rimozione immediata di variabili costanti o semi-costanti, alleggerendo computazionalmente le fasi successive e prevenendo singolarità matematiche.
+%		\item \textbf{Filtro di Multicollinearità (VIF):} Sul set ridotto è stato calcolato il \textit{Variance Inflation Factor} (VIF). Le variabili con un VIF eccessivamente elevato, indicative di una dipendenza lineare pressoché esatta con altri descrittori, sono state rimosse iterativamente come descritto nella Sezione~\ref{sec:vif_intro}.
+%	\end{enumerate}
+	
+	
+%	\chapter{Metodi e dataset}
+%	Origine dei dati
+%	Preparazione preliminare
+%	Estrazione e selezione delle features (multicollinearità)
+%	
+%	Per poter riuscire a confrontare bene i modelli si è mantenuto lo stesso split di train/test.
+%	Confronto utilizzando le features di cassar + ols
+%	vif + ols	
+%	ridge regression diretta
 \end{document}

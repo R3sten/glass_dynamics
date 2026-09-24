@@ -29,30 +29,10 @@ def generate_bootstrap_predictions(
     y_scaler: Any = None,
     n_estimators: int = 100,
     random_state: int = 42
-) -> Tuple[pd.DataFrame, Dict[int, pd.DataFrame]]:
+) -> Tuple[pd.DataFrame, Dict[Any, pd.DataFrame]]:
     """
     Trains an ensemble of models on bootstrap samples to generate distributions of predictions.
-
-    Parameters
-    ----------
-    base_model : Estimator
-        The untrained base regression model (e.g., CustomRidgeRegression).
-    X_train, y_train : pd.DataFrame
-        The full training datasets.
-    X_test : pd.DataFrame
-        The test dataset features.
-    y_scaler : Scaler, optional
-        Scaler used to inverse transform the predictions to physical units.
-    n_estimators : int, default=100
-        Number of bootstrap models to train.
-    random_state : int, default=42
-        Seed for reproducibility.
-
-    Returns
-    -------
-    Tuple[pd.DataFrame, Dict[int, pd.DataFrame]]
-        - The Mean Prediction DataFrame (averaged across the ensemble).
-        - A dictionary mapping each Test ID to its N bootstrap predictions (DataFrame).
+    Includes a bulletproof switch for Target-Specific models like CustomSupervisedPCR.
     """
     logger.info(f"Training ensemble of {n_estimators} bootstrap models...")
     
@@ -60,22 +40,33 @@ def generate_bootstrap_predictions(
     target_cols = y_train.columns
     test_ids = X_test.index
     
-    # Store predictions: shape (n_estimators, n_test_samples, n_targets)
+    # CONTROLLO INFALLIBILE: Verifica se la parola "Supervised" è nel nome del tipo.
+    # Questo elude qualsiasi problema di import o di rinominazione del modulo.
+    is_target_specific = "Supervised" in type(base_model).__name__
+    
+    # Storage for predictions: shape (n_estimators, n_test_samples, n_targets)
     all_raw_preds = np.zeros((n_estimators, len(X_test), len(target_cols)))
     
     for i in range(n_estimators):
         # 1. Create a bootstrap sample (sample with replacement)
         X_boot, y_boot = resample(X_train, y_train, random_state=random_state + i)
         
-        # 2. Train a fresh clone of the model on the bootstrap sample
-        model = clone(base_model)
-        model.fit(X_boot, y_boot)
-        
-        # 3. Predict on the fixed test set
-        all_raw_preds[i, :, :] = model.predict(X_test)
+        # 2. INTELLIGENT FITTING
+        if is_target_specific:
+            # Addestramento indipendente per Tg, m, log_eta_inf
+            for j, target in enumerate(target_cols):
+                target_model = clone(base_model)
+                # Estraiamo rigorosamente una singola colonna e la forziamo a vettore 1D
+                y_boot_1d = y_boot[target].to_numpy().ravel()
+                target_model.fit(X_boot, y_boot_1d)
+                all_raw_preds[i, :, j] = target_model.predict(X_test)
+        else:
+            # Modelli standard (Ridge, ElasticNet)
+            model = clone(base_model)
+            model.fit(X_boot, y_boot)
+            all_raw_preds[i, :, :] = model.predict(X_test)
 
-    # 4. Convert all predictions back to physical units (if a scaler was used)
-    # Reshape to (n_estimators * n_samples, n_targets) to transform all at once
+    # 3. Convert all predictions back to physical units (if a scaler was used)
     flat_preds = all_raw_preds.reshape(-1, len(target_cols))
     if y_scaler is not None:
         flat_preds_physical = y_scaler.inverse_transform(flat_preds)
@@ -84,14 +75,13 @@ def generate_bootstrap_predictions(
         
     all_physical_preds = flat_preds_physical.reshape(n_estimators, len(X_test), len(target_cols))
     
-    # 5. Calculate the Mean Prediction for the final model output
+    # 4. Calculate the Mean Prediction for the final model output
     mean_preds = np.mean(all_physical_preds, axis=0)
     mean_df = pd.DataFrame(mean_preds, index=test_ids, columns=target_cols)
     
-    # 6. Organize the bootstrap distributions per Glass ID
+    # 5. Organize the bootstrap distributions per Glass ID
     distributions_dict = {}
     for j, glass_id in enumerate(test_ids):
-        # Extract all N predictions for this specific glass
         glass_preds = all_physical_preds[:, j, :]
         distributions_dict[glass_id] = pd.DataFrame(glass_preds, columns=target_cols)
 

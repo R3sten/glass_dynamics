@@ -1,16 +1,18 @@
 """
 Model Evaluation and Physical Validation Module.
 
-This module evaluates the performance of the trained Ridge regression model 
-on unseen test data. It computes metrics for individual targets in their 
-scaled (training) space. Then, it validates the global physical performance 
-by comparing predicted viscosities against both the exact experimental values 
-and the "ideal" viscosities derived from the true MYEGA fitted parameters.
+This module evaluates the performance of the trained regression models 
+(including Ridge, Elastic Net, and SPCR) on unseen test data. It computes 
+metrics for individual targets in their scaled (training) space. Then, it 
+validates the global physical performance by comparing predicted viscosities 
+against both the exact experimental values and the "ideal" viscosities 
+derived from the true MYEGA fitted parameters.
 """
 
 import numpy as np
 import pandas as pd
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error, median_absolute_error
+from sklearn.base import clone
 from scipy.stats import pearsonr
 from typing import Optional, Dict, Any
 from glass_dynamics.core.logger import logger
@@ -43,6 +45,8 @@ def myega_equation(T: np.ndarray, log_inf: np.ndarray, Tg: np.ndarray, m: np.nda
 
 def evaluate_final_model(
     model: Any,
+    X_train: pd.DataFrame,
+    y_train: pd.DataFrame,
     X_test: pd.DataFrame,
     y_test: pd.DataFrame,
     viscosity_df: pd.DataFrame,
@@ -50,16 +54,17 @@ def evaluate_final_model(
     target_cols: list = ['Tg', 'm','log_inf']
 ) -> Dict[str, Any]:
     """
-    Evaluate the model on individual parameters (scaled space) and globally on viscosity.
+    Train and evaluate the model on individual parameters (scaled space) 
+    and globally on physical viscosity using MYEGA.
 
     Parameters
     ----------
-    model : CustomRidgeRegression
-        The trained regression model.
-    X_test : pd.DataFrame
-        The scaled testing feature matrix.
-    y_test : pd.DataFrame
-        The testing target matrix (must be in the scaled space used for training).
+    model : Any
+        The un-fitted regression model (e.g., CustomRidgeRegression, CustomSupervisedPCR).
+    X_train, y_train : pd.DataFrame
+        Training data required to fit the model properly.
+    X_test, y_test : pd.DataFrame
+        Testing data. y_test must be in the scaled space used for training.
     viscosity_df : pd.DataFrame
         The raw dataset containing experimental Viscosity and Temperature measurements.
         Must contain columns 'ID', 'T', and 'log_visc'.
@@ -71,14 +76,30 @@ def evaluate_final_model(
     Returns
     -------
     Dict[str, Any]
-        Dictionary containing all computed metrics.
+        Dictionary containing all computed metrics and prediction arrays.
     """
-    logger.info(f"Evaluating model on the unseen Test Set ({len(X_test)} glasses)...")
+    model_name = model.__class__.__name__
+    logger.info(f"Training and Evaluating {model_name} on the unseen Test Set ({len(X_test)} glasses)...")
     
     results = {"parameters": {}, "viscosity_vs_experimental": {}, "viscosity_vs_fitted": {}}
     
-    # 1. Parameter Evaluation (In Scaled Space)
-    y_pred_scaled = model.predict(X_test)
+    # Storage for predictions
+    y_pred_scaled = np.zeros_like(y_test.to_numpy())
+    
+    # --- 1. INTELLIGENT TRAINING & PREDICTION ---
+    if model_name == "CustomSupervisedPCR":
+        # SPCR requires a specific optimal subspace for each target
+        for i, target in enumerate(target_cols):
+            target_model = clone(model)
+            target_model.fit(X_train, y_train[target])
+            y_pred_scaled[:, i] = target_model.predict(X_test)
+    else:
+        # Standard models (Ridge, ElasticNet, PCR) can handle multi-target natively
+        cloned_model = clone(model)
+        cloned_model.fit(X_train, y_train)
+        y_pred_scaled = cloned_model.predict(X_test)
+
+    # --- 2. Parameter Evaluation (In Scaled Space) ---
     y_true_scaled = y_test.to_numpy()
     
     predictions_scaled_df = pd.DataFrame(y_pred_scaled, columns=target_cols, index=y_test.index)
@@ -108,7 +129,7 @@ def evaluate_final_model(
         print(f"  MedAE   : {medae:.3f}")
         print("-" * 50)
 
-    # 2. Transform parameters back to physical units for MYEGA calculations
+    # --- 3. Transform back to physical units for MYEGA calculations ---
     if y_scaler is not None:
         y_pred_physical = y_scaler.inverse_transform(y_pred_scaled)
         y_true_physical = y_scaler.inverse_transform(y_true_scaled)
@@ -119,7 +140,7 @@ def evaluate_final_model(
     predictions_df = pd.DataFrame(y_pred_physical, columns=target_cols, index=y_test.index)
     truths_df = pd.DataFrame(y_true_physical, columns=target_cols, index=y_test.index)
 
-    # 3. Global Viscosity Evaluation
+    # --- 4. Global Viscosity Evaluation ---
     logger.info("Computing global viscosity performance via MYEGA equation...")
     
     true_viscosities = []  # Experimental log_visc
@@ -154,12 +175,10 @@ def evaluate_final_model(
                 inter_viscosities.append(eta_inter)
                 true_viscosities.append(true_visc)
 
-    # Convert lists to numpy arrays
     pred_viscosities = np.array(pred_viscosities)
     inter_viscosities = np.array(inter_viscosities)
     true_viscosities = np.array(true_viscosities)
     
-    # Helper function to compute and print metrics
     def evaluate_and_print(true_array, pred_array, title, dict_key):
         r, _ = pearsonr(true_array, pred_array)
         r2 = r2_score(true_array, pred_array)
@@ -180,14 +199,12 @@ def evaluate_final_model(
 
     print("\n" + "=" * 50)
     
-    # Evaluate Pred vs True Fitted (Intermediate)
     evaluate_and_print(
         inter_viscosities, pred_viscosities, 
         title="VISCOSITY: PREDICTED vs TRUE FITTED (MYEGA)", 
         dict_key="viscosity_vs_fitted"
     )
 
-    # Evaluate Pred vs Experimental (Ground Truth)
     evaluate_and_print(
         true_viscosities, pred_viscosities, 
         title="VISCOSITY: PREDICTED vs EXPERIMENTAL (GROUND TRUTH)", 

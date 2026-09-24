@@ -246,6 +246,7 @@ __marimo__/
 .pdf
 
 thesis/main.pdf
+thesis/chapters/*.pdf
 
 ## Bibliography auxiliary files (bibtex/biblatex/biber):
 *.bbl
