@@ -2,14 +2,133 @@
 
 \begin{document}
 	\chapter{Analisi dati e risultati}
+	\label{sec:risultati}
 	
 	\section{Ottimizzazione degli iperparametri}
+	\label{sec:iperparameters}
 	
+	\subsection*{Ridge Regression}
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[trim=0cm 0cm 0cm 0.8cm, clip, height=8cm]{tracce_ridge/Tg_fitted.pdf}
+		\caption{Tg target weights vs alpha}
+		\label{fig:ridge_weights}
+	\end{figure}
+	
+	\begin{figure}[htbp]
+	\centering
+	\includegraphics[trim=0cm 0cm 0cm 0.8cm, clip, height=6cm]{performance/ridge/Ridge_Global_Viscosity_vs_Alpha.pdf}
+	\caption{Ridge viscosity performance vs alpha}
+	\label{fig:ridge_performance_viscosity}
+	\end{figure}
+	
+	
+	\newpage
+	\subsection*{Elastic Net}
+	
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[trim=0cm 0cm 0cm 0.8cm, clip, height=6cm]{performance/elastic_net/ElasticNet_CV_Heatmap_Global_Viscosity.pdf}
+		\caption{Elastic Net viscosity performance vs alpha}
+		\label{fig:elastic_performance_viscosity}
+	\end{figure}
+	
+	
+	\newpage
+	\subsection*{PCR}
+	
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[trim=0cm 0cm 0cm 0.8cm, clip, height=6cm]{performance/pcr/PCR_Global_Viscosity_Performance.pdf}
+		\caption{PCR viscosity performance vs P}
+		\label{fig:pcr_performance_viscosity}
+	\end{figure}
+	
+	
+	\newpage
+	\subsection*{SPCR}
+	
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[trim=0cm 0cm 0cm 0.8cm, clip, height=6cm]{performance/spcr/SPCR_Global_Viscosity_Performance.pdf}
+		\caption{SPCR viscosity performance vs P}
+		\label{fig:spcr_performance_viscosity}
+	\end{figure}
+
+	
+	\newpage
 	\section{Valutazione delle performance predittive}
+	\label{sec:performances}
+	
+	\begin{table}[h!]
+		\centering
+		\resizebox{\textwidth}{!}{
+			\begin{tabular}{l|cc|cc|cc|cc}
+				\toprule
+				& \multicolumn{2}{c|}{\textbf{Viscosità Globale}} & \multicolumn{2}{c|}{\textbf{Target: $T_g$}} & \multicolumn{2}{c|}{\textbf{Target: $m$}} & \multicolumn{2}{c}{\textbf{Target: $\log_{10}\eta_\infty$}} \\
+				\textbf{Modello} & \textbf{$R^2$} & \textbf{RMSE} & \textbf{$R^2$} & \textbf{RMSE} & \textbf{$R^2$} & \textbf{RMSE} & \textbf{$R^2$} & \textbf{RMSE} \\
+				\midrule
+				\textbf{Elastic ($\alpha=0.005$)} & 0.930 & 1.075 & 0.895 & 0.306 & 0.755 & 0.510 & 0.226 & 0.817 \\
+				\textbf{Ridge}      & 0.920 & 1.147 & 0.890 & 0.312 & 0.769 & 0.495 & 0.257 & 0.801 \\
+				\textbf{SPCR ($P=10$)} & 0.813 & 1.756 & 0.772 & 0.451 & 0.737 & 0.528 & 0.229 & 0.815 \\
+				\textbf{VIF + OLS}  & 0.776 & 1.918 & 0.819 & 0.401 & 0.761 & 0.503 & 0.200 & 0.831 \\
+				\textbf{PCR ($P=15$)} & 0.762 & 1.979 & 0.749 & 0.472 & 0.714 & 0.551 & 0.155 & 0.854 \\
+				\textbf{Elastic ($\alpha=0.15$)} & 0.670 & 2.331 & 0.709 & 0.508 & 0.664 & 0.597 & 0.098 & 0.882 \\
+				\bottomrule
+			\end{tabular}
+		}
+		\caption{Riassunto delle performance predittive dei modelli valutati sull'\textit{unseen test set} per la stima della viscosità globale e dei singoli parametri. Le metriche utilizzate sono descritte nell'Appendice \ref{app:metrics}.}
+		\label{tab:performance_summary}
+	\end{table}
+	
+	
 	\subsection{Analisi della qualità dell'interpolazione}
+	\label{sec:qualita_interpolazione}
+	
+	\begin{figure}[htbp]
+		\centering
+		\begin{subfigure}[b]{0.49\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{correlazione/ridge_2D_density_histogram.png}
+			\caption{Ridge}
+			\label{fig:density_ridge}
+		\end{subfigure}
+		\hfill
+		\begin{subfigure}[b]{0.49\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{correlazione/spcr_2D_density_histogram.png}
+			\caption{SPCR}
+			\label{fig:density_pcr}
+		\end{subfigure}
+		
+		\caption{}
+		\label{fig:correlazione}
+	\end{figure}
+	
 	\subsection*{Analisi degli errori}
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[trim=0cm 0cm 0cm 0.1cm, clip, height=8cm]{test_viscosity_plots/ridge/data_merging.png}
+		\caption{Problemi dovuti alla deduplicazione (ridge regression)}
+		\label{fig:deduplication}
+	\end{figure}
 	\subsection*{Stima dell'incertezza predittiva}
 	\subsection*{Analisi dei residui}
 	
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[trim=0cm 0cm 0cm 0.7cm, clip, height=8cm]{distanza/ridge_distance_plot.pdf}
+		\caption{Ridge Regression}
+		\label{fig:distance}
+	\end{figure}
+	
+		\begin{figure}[htbp]
+		\centering
+		\includegraphics[trim=0cm 0cm 0cm 0.7cm, clip, height=7cm]{ridge_Viscosity_Error_Compound.pdf}
+		\caption{Ridge Regression}
+		\label{fig:compounds}
+	\end{figure}
+	
 	\section{Interpretabilità fisica e analisi delle features}
+	\label{sec:inerpretabilità}
 \end{document}
