@@ -37,31 +37,381 @@
 		\text{MedAE} = \text{mediana}(|y_1 - \hat{y}_1|, |y_2 - \hat{y}_2|, \dots, |y_N - \hat{y}_N|)
 	\end{equation}
 	
+	
+	
 	%B
-	\chapter{Grafici iperparametri}
+	\chapter{Iperparametri per singolo target}
 	\label{app:grafici_iperparametri}
+	
+	In questa appendice sono riportati i grafici di valutazione delle prestazioni predittive utilizzati per l'ottimizzazione degli iperparametri dei modelli lineari. A completamento dell'analisi condotta sulla viscosità globale (discussa nella Sezione \ref{sec:iperparametri}), vengono qui presentate le metriche disaggregate per i tre singoli parametri termodinamici dell'equazione MYEGA: la temperatura di transizione vetrosa ($T_g$), l'indice di fragilità ($m$) e la viscosità asintotica ad alta temperatura ($\log_{10}\eta_\infty$).
+	
+	
+	\section*{Ridge Regression}
+	
+	Per offrire una visione chiara e compatta dell'effetto della regolarizzazione $L_2$, i risultati della regressione Ridge sono stati raggruppati per singolo target termodinamico. Per ciascun parametro vengono mostrati congiuntamente:
+	\begin{itemize}
+		\item L'andamento del coefficiente di correlazione di Pearson ($R$) e del coefficiente di determinazione ($R^2$) in funzione di $\alpha$, calcolati sia sui dati di \textit{training} che di \textit{test}.
+		
+		\item Le \textit{tracce Ridge}, ovvero l'evoluzione dei coefficienti di regressione normalizzati. La diminuzione della deviazione standard (bande sfumate, calcolate su 20 \textit{split} casuali) indica la stabilizzazione numerica del modello rispetto alla multicollinearità.
+	\end{itemize}
 	
 	\begin{figure}[htbp]
 		\centering
-		\includegraphics[trim=0cm 0cm 0cm 0.8cm, clip, height=5cm]{performance/ridge/Tg_fitted.pdf}
-		\includegraphics[trim=0cm 0cm 0cm 0.8cm, clip, height=5cm]{performance/ridge/m_fitted.pdf}
-		\includegraphics[trim=0cm 0cm 0cm 0.8cm, clip, height=5cm]{performance/ridge/log_eta_inf_fitted.pdf}
-		\caption{Ridge performance plots vs alpha}
-		\label{fig:ridge_performance}
+		\begin{subfigure}[b]{\textwidth}
+			\centering
+			\includegraphics[trim=0cm 0cm 0cm 0.8cm, clip, width=0.85\textwidth]{performance/ridge/Tg_fitted.pdf}
+			\caption{Metriche di performance ($R$ e $R^2$).}
+		\end{subfigure}
+		
+		\vspace{0.6cm}
+		\begin{subfigure}[b]{\textwidth}
+			\centering
+			\includegraphics[trim=0cm 0cm 0cm 0.8cm, clip, width=0.85\textwidth]{tracce_ridge/Tg_fitted.pdf}
+			\caption{Evoluzione dei pesi (tracce Ridge).}
+		\end{subfigure}
+		
+		\caption{Regressione Ridge con target la temperatura di transizione vetrosa ($T_g$) al variare della penalità $\alpha$.}
+		\label{fig:app_ridge_tg}
 	\end{figure}
 	
+	\clearpage
+	
+	\begin{figure}[htbp]
+		\centering
+		\begin{subfigure}[b]{\textwidth}
+			\centering
+			\includegraphics[trim=0cm 0cm 0cm 0.8cm, clip, width=0.85\textwidth]{performance/ridge/m_fitted.pdf}
+			\caption{Metriche di performance ($R$ e $R^2$).}
+		\end{subfigure}
+		
+		\vspace{0.6cm}
+		\begin{subfigure}[b]{\textwidth}
+			\centering
+			\includegraphics[trim=0cm 0cm 0cm 0.8cm, clip, width=0.85\textwidth]{tracce_ridge/m_fitted.pdf}
+			\caption{Evoluzione dei pesi (tracce Ridge).}
+		\end{subfigure}
+		
+		\caption{Regressione Ridge con target l'indice di fragilità ($m$) al variare della penalità $\alpha$.}
+		\label{fig:app_ridge_m}
+	\end{figure}
+	
+	\clearpage
+	
+	\begin{figure}[htbp]
+		\centering
+		\begin{subfigure}[b]{\textwidth}
+			\centering
+			\includegraphics[trim=0cm 0cm 0cm 0.8cm, clip, width=0.85\textwidth]{performance/ridge/log_eta_inf_fitted.pdf}
+			\caption{Metriche di performance ($R$ e $R^2$).}
+		\end{subfigure}
+		
+		\vspace{0.6cm}
+		\begin{subfigure}[b]{\textwidth}
+			\centering
+			\includegraphics[trim=0cm 0cm 0cm 0.8cm, clip, width=0.85\textwidth]{tracce_ridge/log_eta_inf_fitted.pdf}
+			\caption{Evoluzione dei pesi (tracce Ridge).}
+		\end{subfigure}
+		
+		\caption{Regressione Ridge con target la viscosità asintotica ($\log_{10}\eta_\infty$) al variare della penalità $\alpha$.}
+		\label{fig:app_ridge_eta}
+	\end{figure}
+	
+	\clearpage
+	
+	\section*{Regressione Elastic Net}
+	Le \textit{heatmap} illustrano i risultati della \textit{cross-validation} a 5 \textit{fold} sui dati di \textit{training}, mostrando la variazione di $R^2$ e RMSE al variare congiunto dell'intensità di regolarizzazione ($\alpha$) e del rapporto di miscelazione Lasso/Ridge ($\beta$).
+	
+	\begin{figure}[htbp]
+		\centering
+		\begin{subfigure}[b]{\textwidth}
+			\centering
+			\includegraphics[trim=0cm 0cm 0cm 1.5cm, clip, width=0.9\textwidth]{performance/elastic_net/ElasticNet_CV_Heatmap_Tg_fitted.pdf}
+			\caption{Target: Temperatura di transizione vetrosa ($T_g$).}
+		\end{subfigure}
+		
+		\vspace{0.3cm}
+		\begin{subfigure}[b]{\textwidth}
+			\centering
+			\includegraphics[trim=0cm 0cm 0cm 1.5cm, clip, width=0.9\textwidth]{performance/elastic_net/ElasticNet_CV_Heatmap_m_fitted.pdf}
+			\caption{Target: Indice di fragilità ($m$).}
+		\end{subfigure}
+		
+		\vspace{0.3cm}
+		\begin{subfigure}[b]{\textwidth}
+			\centering
+			\includegraphics[trim=0cm 0cm 0cm 1.5cm, clip, width=0.9\textwidth]{performance/elastic_net/ElasticNet_CV_Heatmap_log_eta_inf_fitted.pdf}
+			\caption{Target: Viscosità asintotica ($\log_{10}\eta_\infty$).}
+		\end{subfigure}
+		
+		\caption{\textit{Heatmap} delle prestazioni in \textit{cross-validation} per il modello Elastic Net sui singoli target.}
+		\label{fig:app_elasticnet_targets}
+		\vspace{-3cm}
+	\end{figure}
+	
+	\clearpage
+	
+	\section*{Principal Component Regression (PCR)}
+	Le curve mostrano la progressione dell'accuratezza predittiva all'aumentare del numero di componenti principali ($P$) incluse nel modello. In questo caso, le componenti sono aggiunte in ordine decrescente di varianza strutturale spiegata.
+	
+	\begin{figure}[htbp]
+		\centering
+		\begin{subfigure}[b]{\textwidth}
+			\centering
+			\includegraphics[trim=0cm 0cm 0cm 0.9cm, clip, width=0.8\textwidth]{performance/pcr/Tg_fitted_PCR_Performance.pdf}
+			\caption{Target: Temperatura di transizione vetrosa ($T_g$).}
+		\end{subfigure}
+		
+		\vspace{0.2cm}
+		\begin{subfigure}[b]{\textwidth}
+			\centering
+			\includegraphics[trim=0cm 0cm 0cm 0.9cm, clip, width=0.8\textwidth]{performance/pcr/m_fitted_PCR_Performance.pdf}
+			\caption{Target: Indice di fragilità ($m$).}
+		\end{subfigure}
+		
+		\vspace{0.2cm}
+		\begin{subfigure}[b]{\textwidth}
+			\centering
+			\includegraphics[trim=0cm 0cm 0cm 0.9cm, clip, width=0.8\textwidth]{performance/pcr/log_eta_inf_fitted_PCR_Performance.pdf}
+			\caption{Target: Viscosità asintotica ($\log_{10}\eta_\infty$).}
+		\end{subfigure}
+		
+		\caption{Metriche di performance del modello PCR al variare del numero di componenti principali per i singoli target.}
+		\label{fig:app_pcr_targets}
+		\vspace{-4cm}
+	\end{figure}
+	
+	\clearpage
+
+	\section*{Supervised PCR (SPCR)}
+	
+	A differenza della PCR standard, nei grafici seguenti le componenti principali sono inserite progressivamente nel modello ordinandole in base al valore assoluto della loro correlazione specifica con la grandezza target considerata.
+
+	\begin{figure}[htbp]
+		\centering
+		\begin{subfigure}[b]{\textwidth}
+			\centering
+			\includegraphics[trim=0cm 0cm 0cm 0.9cm, clip, width=0.8\textwidth]{performance/spcr/Tg_fitted_SPCR_Performance.pdf}
+			\caption{Target: Temperatura di transizione vetrosa ($T_g$).}
+		\end{subfigure}
+		
+		\vspace{0.2cm}
+		\begin{subfigure}[b]{\textwidth}
+			\centering
+			\includegraphics[trim=0cm 0cm 0cm 0.9cm, clip, width=0.8\textwidth]{performance/spcr/m_fitted_SPCR_Performance.pdf}
+			\caption{Target: Indice di fragilità ($m$).}
+		\end{subfigure}
+		
+		\vspace{0.2cm}
+		\begin{subfigure}[b]{\textwidth}
+			\centering
+			\includegraphics[trim=0cm 0cm 0cm 0.9cm, clip, width=0.8\textwidth]{performance/spcr/log_eta_inf_fitted_SPCR_Performance.pdf}
+			\caption{Target: Viscosità asintotica ($\log_{10}\eta_\infty$).}
+		\end{subfigure}
+		
+		\caption{Metriche di performance del modello SPCR al variare del numero di componenti principali per i singoli target.}
+		\label{fig:app_spcr_targets}
+		\vspace{-4cm}
+	\end{figure}
+	
+	
+	
+	
 	%C
-	\chapter{Grafici performance e residui}
+	\chapter{Analisi estesa delle predizioni}
 	\label{app:grafici_performance_residui}
+	
+	In questa appendice sono raccolti i grafici di dettaglio relativi alla valutazione predittiva dei modelli analizzati. La prima parte presenta un confronto esteso delle distribuzioni dei residui e degli errori in funzione della distanza composizionale per tutte le architetture lineari testate e per la rete neurale ViscNet. La seconda parte è dedicata alla visualizzazione delle curve viscosimetriche per l'intero \textit{test set} (85 liquidi), includendo le bande di incertezza generate dal modello Ridge Regression.
+	
+	\section*{Qualità dell'interpolazione}
+	
+	I grafici seguenti mettono a confronto gli istogrammi 2D della densità predittiva per tutti i modelli valutati. La retta nera rappresenta la bisettrice ideale (predizione perfetta). Nei riquadri interni è riportata la distribuzione statistica dei residui.
+	
+	\begin{figure}[htbp]
+		\centering
+		\begin{subfigure}[b]{0.48\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{correlazione_viscnet.png}
+			\caption{ViscNet \cite{cassarViscNetNeuralNetwork2021}}
+		\end{subfigure}
+		\hfill
+		\begin{subfigure}[b]{0.48\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{correlazione/ridge_2D_density_histogram.png}
+			\caption{Ridge Regression}
+		\end{subfigure}
+		
+		\vspace{0.2cm}
+		\begin{subfigure}[b]{0.48\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{correlazione/elastic_2D_density_histogram.png}
+			\caption{Elastic Net}
+		\end{subfigure}
+		\hfill
+		\begin{subfigure}[b]{0.48\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{correlazione/vif_ols_2D_density_histogram.png}
+			\caption{VIF + OLS}
+		\end{subfigure}
+		
+		\vspace{0.2cm}
+		\begin{subfigure}[b]{0.48\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{correlazione/pcr_2D_density_histogram.png}
+			\caption{PCR}
+		\end{subfigure}
+		\hfill
+		\begin{subfigure}[b]{0.48\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{correlazione/spcr_2D_density_histogram.png}
+			\caption{Supervised PCR}
+		\end{subfigure}
+		
+		\caption{Istogrammi 2D della viscosità predittiva rispetto a quella sperimentale ($\log_{10}\eta$) per tutti i modelli analizzati. Risulta evidente il progressivo scostamento dalla retta ideale man mano che si impone maggiore sparsità ai modelli lineari.}
+		\label{fig:app_2d_histograms}
+	\end{figure}
+	
+	\clearpage
+	
+	\section*{Errore di generalizzazione}
+	
+	Di seguito è riportato l'andamento del RMSE in funzione della distanza chimica Canberra \cite{cassarViscNetNeuralNetwork2021} tra ciascun liquido del \textit{test set} e i campioni presenti nel \textit{training set}. L'analisi evidenzia il limite di estrapolazione al di fuori del dominio noto.
+	
+	\begin{figure}[htbp]
+		\centering
+		\begin{subfigure}[b]{0.4\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{distanza/viscnet_distance_plot.png}
+			\caption{ViscNet \cite{cassarViscNetNeuralNetwork2021}}
+		\end{subfigure}
+		\hfill
+		\begin{subfigure}[b]{0.4\textwidth}
+			\centering
+			\includegraphics[trim=0cm 0cm 0cm 0.9cm, clip, width=0.93\textwidth]{distanza/ridge_distance_plot.pdf}
+			\caption{Ridge Regression}
+		\end{subfigure}
+		
+		\begin{subfigure}[b]{0.4\textwidth}
+			\centering
+			\includegraphics[trim=0cm 0cm 0cm 0.9cm, clip, width=0.93\textwidth]{distanza/elastic_net_distance_plot.pdf}
+			\caption{Elastic Net}
+		\end{subfigure}
+		\hfill
+		\begin{subfigure}[b]{0.4\textwidth}
+			\centering
+			\includegraphics[trim=0cm 0cm 0cm 0.9cm, clip, width=0.93\textwidth]{distanza/vif_ols_distance_plot.pdf}
+			\caption{VIF + OLS}
+		\end{subfigure}
+		
+		\begin{subfigure}[b]{0.4\textwidth}
+			\centering
+			\includegraphics[trim=0cm 0cm 0cm 0.9cm, clip, width=0.93\textwidth]{distanza/pcr_distance_plot.pdf}
+			\caption{PCR}
+		\end{subfigure}
+		\hfill
+		\begin{subfigure}[b]{0.4\textwidth}
+			\centering
+			\includegraphics[trim=0cm 0cm 0cm 0.9cm, clip, width=0.93\textwidth]{distanza/spcr_distance_plot.pdf}
+			\caption{Supervised PCR}
+		\end{subfigure}
+		
+		\caption{Andamento del RMSE rispetto alla distanza chimica di Canberra dai campioni di addestramento. Si osserva un generale degrado delle prestazioni (aumento dell'errore) sui vetri con composizioni atipiche per tutti i modelli esaminati.}
+		\label{fig:app_distance_plots}
+		\vspace{-5cm}
+	\end{figure}
+	
+	\clearpage
+	
+	\section*{Curve viscosimetriche sul test set (Ridge Regression)}
+	
+	Nelle pagine seguenti sono riportati i grafici viscosità-temperatura per tutti gli 85 liquidi che compongono l'\textit{unseen test set}. I punti (blu) rappresentano le misurazioni sperimentali estratte dal database originale.
+	
+	Le bande tratteggiate delineano l'intervallo di confidenza al 95\%, calcolato attraverso la propagazione dell'incertezza del modello su 100 iterazioni \textit{bootstrap}. Si noti come tali bande siano indicatrici dell'incertezza della regressione Ridge dovuta al campionamento e non del rumore intrinseco dei dati sperimentali.
+	
+	\vspace{1cm}
+	
+	\begin{figure}[htbp]
+		\centering
+		% Inserito il grafico singolo per ottimizzare lo spazio sotto il testo
+		\includegraphics[height=5.5cm]{test_viscosity_plots/ridge/all_liquids_8.pdf}
+		\caption{Misurazioni sperimentali e intervallo di confidenza al 95\% del modello Ridge Regression (1/85).}
+		\label{fig:all_liquids_8}
+	\end{figure}
+	
+	\clearpage
+	
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=\textwidth, height=\textheight, keepaspectratio]{test_viscosity_plots/ridge/all_liquids_1.pdf}
+		\caption{Misurazioni sperimentali e intervallo di confidenza al 95\% del modello Ridge Regression (parte 1/7).}
+		\label{fig:all_liquids_1}
+	\end{figure}
+	
+	\clearpage
+	
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=\textwidth, height=\textheight, keepaspectratio]{test_viscosity_plots/ridge/all_liquids_2.pdf}
+		\caption{Misurazioni sperimentali e intervallo di confidenza del modello (parte 2/7).}
+		\label{fig:all_liquids_2}
+	\end{figure}
+	
+	\clearpage
+	
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=\textwidth, height=\textheight, keepaspectratio]{test_viscosity_plots/ridge/all_liquids_3.pdf}
+		\caption{Misurazioni sperimentali e intervallo di confidenza al 95\% del modello Ridge Regression (parte 3/7).}
+		\label{fig:all_liquids_3}
+	\end{figure}
+	
+	\clearpage
+	
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=\textwidth, height=\textheight, keepaspectratio]{test_viscosity_plots/ridge/all_liquids_4.pdf}
+		\caption{Misurazioni sperimentali e intervallo di confidenza al 95\% del modello Ridge Regression (parte 4/7).}
+		\label{fig:all_liquids_4}
+	\end{figure}
+	
+	\clearpage
+	
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=\textwidth, height=0.9\textheight, keepaspectratio]{test_viscosity_plots/ridge/all_liquids_5.pdf}
+		\caption{Misurazioni sperimentali e intervallo di confidenza al 95\% del modello Ridge Regression (parte 5/7).}
+		\label{fig:all_liquids_5}
+	\end{figure}
+	
+	\clearpage
+	
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=\textwidth, height=\textheight, keepaspectratio]{test_viscosity_plots/ridge/all_liquids_6.pdf}
+		\caption{Misurazioni sperimentali e intervallo di confidenza al 95\% del modello Ridge Regression (parte 6/7).}
+		\label{fig:all_liquids_6}
+	\end{figure}
+	
+	\clearpage
+	
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=\textwidth, height=\textheight, keepaspectratio]{test_viscosity_plots/ridge/all_liquids_7.pdf}
+		\caption{Misurazioni sperimentali e intervallo di confidenza al 95\% del modello Ridge Regression (parte 7/7).}
+		\label{fig:all_liquids_7}
+	\end{figure}
+	
 	
 	%D
 	\chapter{Features e Componenti Principali}
 	\label{app:features}
 	
-	In questa appendice sono riportate le prime 10 variabili predittive (in base al valore assoluto del peso assegnato dal modello) per ciascun approccio di regressione e per ogni parametro termodinamico ($T_g$, $m$, $\log_{10}\eta_\infty$).
-	Assieme alle tabelle ci sono i grafici dell'importanza di tutte le \textit{features} per ogni \textit{target}.
+	Di seguito sono riportate le prime 10 \textit{features} (ordinate in base al valore assoluto del peso assegnato) per ciascun approccio di regressione e per ogni \textit{target} ($T_g$, $m$, $\log_{10}\eta_\infty$).
+	Assieme alle tabelle vengono presentati anche i grafici completi dell'importanza di tutte le \textit{features} (o componenti principali) per ciascun \textit{target}.
+	
+	Per attenuare le fluttuazioni legate al campionamento, i valori dei pesi riportati nelle tabelle e nei grafici sono stati ottenuti calcolando la media dei coefficienti estratti da 100 iterazioni indipendenti del modello. In ciascun ciclo, il dataset di \textit{training} è stato rimescolato e partizionato casualmente, assegnando il 50\% dei liquidi all'addestramento (\textit{training set}) e il restante 50\% alla validazione (\textit{test set}).
 	
 	\section*{Regressione Ridge}
+	\vspace{-4mm}
 	
 	\begin{table}[htbp]
 		\centering
@@ -92,6 +442,7 @@
 			\includegraphics[trim=0.7cm 0cm 25cm 0.7cm, clip, width=\linewidth]{importanza_features/ridge_features_importance.pdf}
 			\captionof{figure}{Importanza delle features per $T_g$.}
 			\label{fig:ridge_features_tg}
+			\vspace{-1.5cm}
 		\end{minipage}
 	\end{table}
 	
