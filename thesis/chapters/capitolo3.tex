@@ -4,61 +4,82 @@
 	\chapter{Analisi dati e risultati}
 	\label{sec:risultati}
 	
-	\section{Ottimizzazione degli iperparametri}
-	\label{sec:iperparameters}
+	Questo capitolo illustra i risultati ottenuti dall'applicazione dei modelli di regressione lineare introdotti nella Sezione \ref{sec:multicollinearita}. La prima fase dell'analisi si concentra sull'ottimizzazione degli iperparametri con il fine di mitigare gli effetti della multicollinearità massimizzando le capacità predittive degli algoritmi. Successivamente, le prestazioni dei modelli verranno confrontate con quelle della rete neurale ViscNet~\cite{cassarViscNetNeuralNetwork2021}, per poi concludere con un'indagine critica sull'effettiva interpretabilità dei pesi estratti.
 	
-	\subsection*{Ridge Regression}
+	\section{Ottimizzazione degli iperparametri}
+	\label{sec:iperparametri}
+	
+	\subsection{Ridge Regression}
+	
+	Per il modello di regressione Ridge, il parametro da ottimizzare è il coefficiente di regolarizzazione $L_2$, denotato con $\alpha$. Al fine di valutarne l'impatto sia sulla stabilità numerica che sull'accuratezza del modello, l'addestramento è stato ripetuto su 20 partizioni casuali indipendenti (\textit{split}) del dataset di training, assegnando di volta in volta metà dei campioni al training e metà alla validazione.
+	
+	La Figura~\ref{fig:ridge_weights} mostra l'evoluzione dei coefficienti di regressione (pesi) per il target $T_g$ in funzione di $\alpha$. Per facilitare la visualizzazione congiunta, i pesi di ciascuna \textit{feature} sono stati normalizzati rispetto al loro valore massimo in modulo. 
+	L'impiego di partizioni multiple permette di estrarre due informazioni statistiche importanti. La media dei pesi su tutti gli \textit{split} (rappresentata dalle linee continue) fa emergere il segnale stabile, filtrando il rumore statistico legato al singolo campionamento. La deviazione standard (rappresentata dalle bande sfumate), al contrario, funge da indicatore di instabilità: quantifica quanto l'importanza assegnata a una specifica variabile fluttui al variare dei dati di ingresso.
+	
+	Come si osserva visivamente dal grafico, nel limite $\alpha \to 0$ (corrispondente alla stima OLS non regolarizzata), le bande di deviazione standard risultano estremamente ampie. In questo regime il modello è dominato dalla multicollinearità: i pesi assumono valori caotici e divergenti, rendendo inaffidabile qualsiasi interpretazione fisica. Man mano che la penalità $\alpha$ aumenta, la deviazione standard diminuisce. Il punto in cui le bande si restringono segna la soglia in cui la regolarizzazione ha efficacemente attutito la multicollinearità. Tuttavia, si osserva anche che i valori medi dei pesi continuano a incrociarsi e oscillare senza far emergere un singolo modello stabile.
+
 	\begin{figure}[htbp]
 		\centering
 		\includegraphics[trim=0cm 0cm 0cm 0.8cm, clip, height=8cm]{tracce_ridge/Tg_fitted.pdf}
-		\caption{Tg target weights vs alpha}
+		\caption{Evoluzione dei pesi normalizzati del modello Ridge per il target $T_g$ in funzione di $\alpha$. Le linee continue rappresentano la media calcolata su 20 \textit{split} casuali del dataset di \textit{training}, mentre le bande sfumate indicano l'intervallo di una deviazione standard, evidenziando il calo dell'instabilità all'aumentare della regolarizzazione.}
 		\label{fig:ridge_weights}
 	\end{figure}
 	
-	\begin{figure}[htbp]
-	\centering
-	\includegraphics[trim=0cm 0cm 0cm 0.8cm, clip, height=6cm]{performance/ridge/Ridge_Global_Viscosity_vs_Alpha.pdf}
-	\caption{Ridge viscosity performance vs alpha}
-	\label{fig:ridge_performance_viscosity}
-	\end{figure}
-	
-	
-	\newpage
-	\subsection*{Elastic Net}
+	Il valore ottimale di $\alpha$ deve bilanciare la stabilizzazione con la preservazione dell'accuratezza del modello. La Figura~\ref{fig:ridge_performance_viscosity} mostra l'andamento delle metriche di performance globali sulla viscosità ($R^2$ e RMSE). In accordo con quanto evidenziato da Sharma~\textit{et al.}~\cite{sharmaInterpretabilityLinearRegression2026}, un valore di $\alpha = 0.1$ risulta essere un buon compromesso. Come troverà ulteriore conferma nell'analisi successiva, tale penalizzazione stabilizza i coefficienti senza degradare il potere predittivo del modello. I grafici delle performance sui singoli target sono riportati nell'Appendice~\ref{app:grafici_iperparametri}.
 	
 	\begin{figure}[htbp]
 		\centering
-		\includegraphics[trim=0cm 0cm 0cm 0.8cm, clip, height=6cm]{performance/elastic_net/ElasticNet_CV_Heatmap_Global_Viscosity.pdf}
-		\caption{Elastic Net viscosity performance vs alpha}
+		\includegraphics[trim=0cm 0cm 0cm 0.8cm, clip, height=6cm]{performance/ridge/Ridge_Global_Viscosity_vs_Alpha.pdf}
+		\caption{Andamento del coefficiente di determinazione $R^2$ (sinistra) e del RMSE (destra) per la viscosità globale in funzione del parametro di regolarizzazione $\alpha$.}
+		\label{fig:ridge_performance_viscosity}
+	\end{figure}
+	
+	\subsection{Elastic Net}
+	
+	Il modello Elastic Net introduce un ulteriore grado di libertà, richiedendo l'ottimizzazione congiunta del parametro di regolarizzazione $\alpha$ e del rapporto di miscelazione $\beta \in [0, 1]$, il quale modula il bilanciamento tra norma $L_1$ (Lasso, che induce sparsità) e norma $L_2$ (Ridge). La calibrazione è stata effettuata tramite una \textit{cross-validation} a 5 \textit{fold} sull'intero set di \textit{training}.
+	
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[trim=0.2cm 0cm 0cm 1.5cm, clip, height=6cm]{performance/elastic_net/ElasticNet_CV_Heatmap_Global_Viscosity.pdf}
+		\caption{\textit{Heatmap} del coefficiente $R^2$ e del RMSE per la viscosità globale ottenute tramite \textit{cross-validation} a 5 \textit{fold} sui dati di \textit{training} per Elastic Net.}
 		\label{fig:elastic_performance_viscosity}
 	\end{figure}
 	
+	La \textit{heatmap} in Fig.~\ref{fig:elastic_performance_viscosity} mappa le metriche $R^2$ e RMSE al variare della combinazione dei due iperparametri. Le prestazioni ottimali si concentrano nella regione a basso $\beta$ confermando l'efficacia della pura regolarizzazione Ridge. In particolare, il massimo corrispondente a $\beta = 0$ e $\alpha = 0.1$. Aumentare la sparsità (spostandosi verso destra sull'asse $\beta$) comporta una perdita di informazioni che si traduce in un abbassamento dell'accuratezza. L'assenza di un modello sparso in grado di competere con il modello denso suggerisce che non ci sia un sottoinsieme ristretto e rappresentativo tra le \textit{features} introdotte capace di spiegare da solo la varianza della viscosità. Al contrario, sembra essere il contributo globale dell'intero spazio dei descrittori a fornire l'informazione necessaria per ottenere dei risultati accurati.
 	
-	\newpage
-	\subsection*{PCR}
+	Nonostante ciò, al fine di proseguire l'indagine sull'interpretabilità, per questo lavoro si è scelto di selezionare arbitrariamente la configurazione $\alpha = 0.1$ e $\beta = 0.8$. Tale scelta mira a testare esplicitamente un modello che tenta di unire la stabilità della regolarizzazione quadratica a un elevato grado di sparsità, pur con la consapevolezza della perdita di accuratezza intrinseca di questa configurazione. Le \textit{heatmap} relative ai singoli target termodinamici sono consultabili nell'Appendice~\ref{app:grafici_iperparametri}.
 	
+	
+	\subsection{Modelli a Componenti Principali (PCR e SPCR)}
+	
+	Per i modelli basati su riduzione dimensionale, l'iperparametro da determinare è il numero $P$ di componenti principali da includere nella regressione. 
+	Nel caso della Principal Component Regression (PCR) classica, le componenti vengono ordinate in senso decrescente rispetto all'autovalore associato, ovvero in base alla quantità di varianza dei dati chimici originari che riescono a spiegare. Come illustrato nella Figura~\ref{fig:pcr_performance_viscosity}, osservando la curva del set di \textit{training}, si individua un \textit{plateau} ottimale di prestazioni trattenendo circa $P=14$ componenti.
+	
+	Comportamenti differenti emergono invece adottando la variante supervisionata (SPCR, Figura~\ref{fig:spcr_performance_viscosity}), in cui le componenti sono preventivamente ordinate in base al valore assoluto della loro correlazione (di Pearson) con le grandezze target. In primo luogo, l'approccio supervisionato consente di raggiungere prestazioni superiori impiegando un numero inferiore di componenti ($P=12$). In secondo luogo, le metriche relative ai singoli parametri di MYEGA in SPCR (riportate in Appendice~\ref{app:grafici_iperparametri}) mostrano per costruzione una crescita rigorosamente monotona all'aumentare di $P$, comportamento che non si verifica nella PCR standard.
+	
+	Questa discrepanza implica che la maggior parte della varianza intrinseca del dataset di partenza costituisce di fatto "rumore" rispetto al fenomeno della viscosità.
+
 	\begin{figure}[htbp]
 		\centering
 		\includegraphics[trim=0cm 0cm 0cm 0.8cm, clip, height=6cm]{performance/pcr/PCR_Global_Viscosity_Performance.pdf}
-		\caption{PCR viscosity performance vs P}
+		\caption{Evoluzione delle prestazioni (PCR) per la predizione della viscosità globale all'aumentare del numero di componenti principali $P$ trattenute, ordinate per varianza spiegata decrescente.}
 		\label{fig:pcr_performance_viscosity}
 	\end{figure}
-	
-	
-	\newpage
-	\subsection*{SPCR}
 	
 	\begin{figure}[htbp]
 		\centering
 		\includegraphics[trim=0cm 0cm 0cm 0.8cm, clip, height=6cm]{performance/spcr/SPCR_Global_Viscosity_Performance.pdf}
-		\caption{SPCR viscosity performance vs P}
+		\caption{Evoluzione delle prestazioni (SPCR) per la predizione della viscosità globale all'aumentare del numero di componenti principali $P$, ordinate in base alla correlazione con ciascun target.}
 		\label{fig:spcr_performance_viscosity}
 	\end{figure}
-
+	\clearpage
 	
-	\newpage
+	
+	
 	\section{Valutazione delle performance predittive}
 	\label{sec:performances}
+	
+	La Tabella~\ref{tab:performance_all} riassume le metriche predittive calcolate sull'\textit{unseen test set} per tutte le architetture lineari analizzate, includendo come termine di paragone i risultati ottenuti dalla rete neurale ViscNet~\cite{cassarViscNetNeuralNetwork2021}.
 	
 	\begin{table}[h!]
 		\centering
@@ -68,67 +89,137 @@
 				& \multicolumn{2}{c|}{\textbf{Viscosità Globale}} & \multicolumn{2}{c|}{\textbf{Target: $T_g$}} & \multicolumn{2}{c|}{\textbf{Target: $m$}} & \multicolumn{2}{c}{\textbf{Target: $\log_{10}\eta_\infty$}} \\
 				\textbf{Modello} & \textbf{$R^2$} & \textbf{RMSE} & \textbf{$R^2$} & \textbf{RMSE} & \textbf{$R^2$} & \textbf{RMSE} & \textbf{$R^2$} & \textbf{RMSE} \\
 				\midrule
-				\textbf{Elastic ($\alpha=0.005$)} & 0.930 & 1.075 & 0.895 & 0.306 & 0.755 & 0.510 & 0.226 & 0.817 \\
+				\textbf{ViscNet}    & 0.97 & 1.1 & - & - & - & - & - & - \\
+				\midrule
 				\textbf{Ridge}      & 0.920 & 1.147 & 0.890 & 0.312 & 0.769 & 0.495 & 0.257 & 0.801 \\
-				\textbf{SPCR ($P=10$)} & 0.813 & 1.756 & 0.772 & 0.451 & 0.737 & 0.528 & 0.229 & 0.815 \\
+				\textbf{Elastic ($\alpha=.1;\beta=.8$)} & 0.806 & 1.788 & 0.778 & 0.444 & 0.712 & 0.553 & 0.162 & 0.850 \\
+				\textbf{SPCR ($P=12$)} & 0.798 & 1.825 & 0.773 & 0.449 & 0.731 & 0.534 & 0.283 & 0.786 \\
 				\textbf{VIF + OLS}  & 0.776 & 1.918 & 0.819 & 0.401 & 0.761 & 0.503 & 0.200 & 0.831 \\
-				\textbf{PCR ($P=15$)} & 0.762 & 1.979 & 0.749 & 0.472 & 0.714 & 0.551 & 0.155 & 0.854 \\
-				\textbf{Elastic ($\alpha=0.15$)} & 0.670 & 2.331 & 0.709 & 0.508 & 0.664 & 0.597 & 0.098 & 0.882 \\
+				\textbf{PCR ($P=14$)} & 0.655 & 2.383 & 0.713 & 0.505 & 0.731 & 0.534 & 0.134 & 0.864 \\
 				\bottomrule
 			\end{tabular}
 		}
-		\caption{Riassunto delle performance predittive dei modelli valutati sull'\textit{unseen test set} per la stima della viscosità globale e dei singoli parametri. Le metriche utilizzate sono descritte nell'Appendice \ref{app:metrics}.}
-		\label{tab:performance_summary}
+		\caption{Riassunto delle performance predittive valutate sull'\textit{unseen test set} per la stima della viscosità globale e dei singoli parametri di MYEGA.}
+		\label{tab:performance_all}
 	\end{table}
 	
+	Tra i modelli lineari, la regressione Ridge raggiunge le prestazioni più elevate. L'introduzione di criteri di sparsità (Elastic Net, VIF+OLS) comporta una riduzione dell'accuratezza predittiva. Tra i modelli a componenti principali si conferma la superiorità dell'approccio supervisionato: la SPCR ($P=12$) supera nettamente la PCR classica ($P=14$). È inoltre interessante osservare come la SPCR ottenga risultati migliori rispetto al filtraggio VIF+OLS per la stima della viscosità asintotica ad alta temperatura ($\log_{10}\eta_\infty$), mitigando i limiti riscontrati sui target $T_g$ ed $m$.
+	
+	Per valutare in dettaglio la validità dell'approccio lineare, la Tabella~\ref{tab:performance_viscnet_ridge} confronta il modello Ridge con ViscNet integrando le metriche di errore assoluto (MAE e MedAE) per la viscosità globale.
+	
+	\begin{table}[h!]
+		\centering
+		\begin{tabular}{lcccc}
+			\toprule
+			\textbf{Modello} & \textbf{$R^2$ ($\uparrow$)} & \textbf{RMSE ($\downarrow$)} & \textbf{MAE ($\downarrow$)} & \textbf{MedAE ($\downarrow$)} \\
+			\midrule
+			\textbf{ViscNet} & 0.97 & 1.1 & 0.78 & 0.53 \\
+			\textbf{Ridge Regression} & 0.920 & 1.147 & 0.731 & 0.446 \\
+			\bottomrule
+		\end{tabular}
+		\caption{Confronto di dettaglio sull'\textit{unseen test set} tra la rete neurale ViscNet~\cite{cassarViscNetNeuralNetwork2021} e la regressione Ridge per la stima della viscosità globale. Le metriche utilizzate sono descritte nell'Appendice \ref{app:metrics}.}
+		\label{tab:performance_viscnet_ridge}
+	\end{table}
+	
+	ViscNet registra valori superiori per $R^2$ e un RMSE leggermente inferiore. L'RMSE penalizza quadraticamente gli errori di forte entità: sui liquidi anomali (\textit{outliers}) l'architettura non lineare della rete riesce ad adattarsi in modo più flessibile. Tuttavia, la regressione Ridge eccelle nelle metriche lineari e mediane: il MedAE si attesta a 0.446 contro lo 0.53 di ViscNet. Questo indica che, ignorando le fluttuazioni estreme, il modello lineare produce predizioni mediamente più precise e adiacenti al dato sperimentale.
 	
 	\subsection{Analisi della qualità dell'interpolazione}
 	\label{sec:qualita_interpolazione}
+	
+	La Figura~\ref{fig:correlazione} confronta gli istogrammi 2D della densità predittiva rispetto al dato sperimentale per la Ridge regression e per ViscNet~\cite{cassarViscNetNeuralNetwork2021}. 
 	
 	\begin{figure}[htbp]
 		\centering
 		\begin{subfigure}[b]{0.49\textwidth}
 			\centering
 			\includegraphics[width=\textwidth]{correlazione/ridge_2D_density_histogram.png}
-			\caption{Ridge}
+			\caption{Ridge Regression}
 			\label{fig:density_ridge}
 		\end{subfigure}
 		\hfill
 		\begin{subfigure}[b]{0.49\textwidth}
 			\centering
-			\includegraphics[width=\textwidth]{correlazione/spcr_2D_density_histogram.png}
-			\caption{SPCR}
-			\label{fig:density_pcr}
+			\includegraphics[width=\textwidth]{correlazione_viscnet.png}
+			\caption{ViscNet}
+			\label{fig:density_viscnet}
 		\end{subfigure}
-		
-		\caption{}
+		\caption{Istogrammi 2D per la viscosità predittiva vs sperimentale (Ridge a sinistra, ViscNet a destra). I riquadri interni mostrano la distribuzione dei residui.}
 		\label{fig:correlazione}
 	\end{figure}
 	
-	\subsection*{Analisi degli errori}
-	\begin{figure}[htbp]
-		\centering
-		\includegraphics[trim=0cm 0cm 0cm 0.1cm, clip, height=8cm]{test_viscosity_plots/ridge/data_merging.png}
-		\caption{Problemi dovuti alla deduplicazione (ridge regression)}
-		\label{fig:deduplication}
-	\end{figure}
-	\subsection*{Stima dell'incertezza predittiva}
-	\subsection*{Analisi dei residui}
+	Ad alte viscosità entrambi i modelli mostrano una dispersione marcata rispetto alla retta unitaria. Tale comportamento, essendo condiviso, è da imputarsi alla varianza intrinseca dei dati e all'incertezza delle misurazioni sperimentali a basse temperature.
+	
+	A basse viscosità, dove i dati sono più stabili, emergono invece differenze strutturali. La regressione Ridge si mantiene centrata sulla bisettrice. ViscNet manifesta al contrario un sistematico \textit{bias} di sovrastima, ben visibile dall'asimmetria nell'istogramma dei residui (riquadro in Figura~\ref{fig:density_viscnet}). Modelli lineari più sparsi mostrano deviazioni ancora più ampie dalla retta ideale (i grafici sono consultabili in Appendice \ref{app:grafici_performance_residui}).
+	
+	
+	\subsection*{Incertezza dei dati e stabilità del modello}
+	
+	L'osservazione diretta dei valori di viscosità di partenza ha evidenziato anomalie riconducibili alla fase di deduplicazione del dataset iniziale (vedi Sez.~\ref{sec:dataset_originale}). Il raggruppamento di fonti sperimentali disomogenee ha introdotto per alcune composizioni una sovrapposizione di misurazioni fisicamente incompatibili. Il caso del vetro ID 155 nel test set (Figura~\ref{fig:deduplication}) mostra chiaramente la sovrapposizione di più curve discordanti per la medesima composizione nominale.
 	
 	\begin{figure}[htbp]
 		\centering
-		\includegraphics[trim=0cm 0cm 0cm 0.7cm, clip, height=8cm]{distanza/ridge_distance_plot.pdf}
-		\caption{Ridge Regression}
+		\includegraphics[trim=0cm 0cm 0cm 0.1cm, clip, height=7cm]{test_viscosity_plots/ridge/data_merging.png}
+		\caption{Esempio di rumore artificiale dovuto alla deduplicazione nel test set (liquido ID 155, modello Ridge).}
+		\label{fig:deduplication}
+	\end{figure}
+	
+	Per verificare la stabilità e l'incertezza predittiva dei modelli lineari analizzati, sono state prodotte le due bande di confidenza al 95\% tratteggiate, stimate attraverso un approccio non-parametrico \textit{bootstrap}~\cite{hastieElementsStatisticalLearning2009}. Il dataset di training è stato ricampionato casualmente per 100 volte, addestrando altrettanti modelli indipendenti. Per ogni composizione, è stato calcolato un fascio di 100 curve MYEGA, estraendo infine gli intervalli di confidenza al 95\% dei valori di viscosità così ricavati, per ogni temperatura.
+	
+	Le bande tratteggiate in Figura~\ref{fig:deduplication} rappresentano unicamente questa varianza di predizione. I grafici di tutti gli 85 liquidi di test sono consultabili in Appendice~\ref{app:grafici_performance_residui}, dove gli intervalli di confidenza relativi alla Ridge regression.
+	
+	\subsection{Analisi dei residui}
+	
+	La dipendenza dell'accuratezza dalla composizione chimica è quantificata in Figura~\ref{fig:distance}, dove il RMSE viene tracciato in funzione della distanza chimica di Canberra dal \textit{training set}~\cite{cassarViscNetNeuralNetwork2021}. L'aumento progressivo dell'errore per le formulazioni atipiche riflette il limite di estrapolazione comune a tutti i modelli \textit{data-driven}~\cite{torraChapter4Data2023}. Tale andamento è condiviso da tutti i modelli analizzati.
+	
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[trim=0cm 0cm 0cm 0.7cm, clip, height=7.5cm]{distanza/ridge_distance_plot.pdf}
+		\caption{Andamento del RMSE (Prediction vs Experimental) in funzione della distanza chimica di Canberra~\cite{cassarViscNetNeuralNetwork2021} per la regressione Ridge.}
 		\label{fig:distance}
 	\end{figure}
 	
-		\begin{figure}[htbp]
+	\begin{figure}[htbp]
 		\centering
-		\includegraphics[trim=0cm 0cm 0cm 0.7cm, clip, height=7cm]{ridge_Viscosity_Error_Compound.pdf}
-		\caption{Ridge Regression}
+		\includegraphics[width=\textwidth]{ridge_Viscosity_Error_Compound.pdf}
+		\caption{Residui di predizione della viscosità media aggregati per composto chimico (Ridge Regression). L'asse orizzontale ordina gli ossidi dal meno frequente al più frequente nel dataset di training.}
 		\label{fig:compounds}
 	\end{figure}
 	
+	Scomponendo l'errore per singolo costituente (Fig.~\ref{fig:compounds}), per gli ossidi più usati (come \text{SiO$_2$}, \text{Na$_2$O}, \text{CaO}, lato destro) la regressione lineare si comporta in modo analogo a ViscNet~\cite{cassarViscNetNeuralNetwork2021}, producendo residui simmetrici centrati attorno allo zero. Le differenze si concentrano sui composti scarsamente campionati (lato sinistro), dove l'errore della regressione Ridge si espande. In questo dominio ViscNet riesce a contenere i residui grazie alla miglior capacità di estrapolazione~\cite{cassarViscNetNeuralNetwork2021}.
+	
+	
+	
 	\section{Interpretabilità fisica e analisi delle features}
-	\label{sec:inerpretabilità}
+	\label{sec:interpretabilita}
+	
+	L'impiego di modelli di regressione lineare in questo studio è stato motivato dalla necessità di superare la natura opaca delle reti neurali, ricercando un'architettura in cui le soluzioni ammettano una lettura fisica diretta. In un modello lineare ideale, il segno e la magnitudo di ciascun peso indicano in modo inequivocabile l'influenza della rispettiva \textit{feature} sull'output. 
+	
+	Per valutare l'effettiva interpretabilità dei modelli adottati, i pesi assegnati alle 560 \textit{features} iniziali sono stati estratti e mediati su 100 partizioni indipendenti del dataset di \textit{training}. Questo approccio garantisce che l'importanza assegnata a ciascun descrittore sia statisticamente affidabile rispetto al rumore intrinseco dei dati. Le classifiche delle prime dieci \textit{features} per importanza assoluta e le distribuzioni globali dei pesi sono riportate nell'Appendice \ref{app:features}.
+	
+	\subsection{Coerenza dei modelli e distribuzione dei pesi}
+	
+	Confrontando le tabelle in Appendice \ref{app:features}, emerge una coerenza di fondo tra i diversi algoritmi. Modelli penalizzati con norme diverse (Ridge, Elastic Net) o filtrati (VIF+OLS) tendono a selezionare descrittori appartenenti alle medesime famiglie chimico-fisiche. Variabili legate al raggio di Van der Waals (\texttt{vdw\_radius}), all'energia di \textit{bandgap} (\texttt{GSbandgap}), all'entalpia di fusione (\texttt{FusionEnthalpy}) e agli elettroni di valenza (\texttt{NsValence}, \texttt{NdValence}) occupano i primi posti delle classifiche, indicando che i modelli stanno intercettando un reale segnale termodinamico e strutturale.
+	
+	Tuttavia, l'analisi visiva delle distribuzioni dei pesi rivela una criticità importante. Come evidenziato da Sharma \textit{et al.}, la regressione Ridge stabilizza con successo le oscillazioni numeriche causate dalla multicollinearità, ma restituisce soluzioni che non sono sufficientemente sparse per essere facilmente interpretabili~\cite{sharmaInterpretabilityLinearRegression2026}. I grafici dell'importanza delle \textit{features} per il modello Ridge (vedi Fig.~\ref{fig:ridge_features_tg}) mostra una distribuzione dei pesi piatta. I coefficienti massimi possiedono un valore assoluto contenuto (nell'ordine di $10^{-1}$) e non si osserva alcuno scalino netto che isoli un piccolo gruppo di variabili dominanti. 
+	
+	Questo profilo quantitativo indica che i singoli descrittori in cima alla classifica hanno una significatività relativa bassa. Sebbene l'approccio Elastic Net forzi la contrazione di molti pesi a zero per indurre sparsità, i pesi rimasti mantengono comunque un andamento continuo senza far emergere un ristretto sottoinsieme di \textit{features} capace di descrivere la varianza del modello.
+	
+	\subsection{Interpretazione della riduzione dimensionale}
+	
+	Le tecniche di riduzione dimensionale affrontano il problema dell'interpretabilità trasformando lo spazio delle variabili. La PCR supervisionata (SPCR) ha dimostrato di poter mantenere un'accuratezza soddisfacente comprimendo l'informazione in sole 12 componenti principali. Questo risultato suggerirebbe l'esistenza di un modello sparso governato da poche macro-variabili strutturali. 
+	
+	Tuttavia, l'interpretazione fisica di queste componenti principali è problematica. Ciascun autovettore (componente principale) è una combinazione lineare densa che rimescola tutte le \textit{features} originali. Proiettando i pesi delle 12 componenti della SPCR a ritroso nello spazio delle \textit{features} di partenza, si ottiene una curva di importanza (Fig.~\ref{fig:spcr_plots} in Appendice \ref{app:features}) che ricalca il profilo della regressione Ridge. Lo stesso comportamento si osserva per la PCR classica. 
+	
+	Ciò implica che le direzioni ottimali individuate dalla SPCA per mappare la viscosità non corrispondono a singoli concetti fisici isolabili, ma a combinazioni complesse dell'intero spettro chimico. La riduzione dimensionale maschera la complessità del sistema senza semplificarne la spiegazione fenomenologica a livello atomico.
+	
+	\subsection{Confronto con le architetture neurali}
+	
+	Alla luce di questi risultati, è lecito chiedersi se i modelli lineari abbiano effettivamente apportato un vantaggio in termini di interpretabilità rispetto alla rete neurale ViscNet~\cite{cassarViscNetNeuralNetwork2021}. 
+	
+	Nel caso delle reti neurali (approccio \textit{black-box}), l'estrazione di conoscenza fisica richiede l'utilizzo di algoritmi \textit{post-hoc} come l'analisi SHAP~\cite{lundbergUnifiedApproachInterpreting2017}. Tali metodi possiedono un limite intrinseco: forniscono spiegazioni puramente locali. Il valore SHAP quantifica l'impatto di una \textit{feature} per una specifica composizione vetrosa, e tale impatto varia da vetro a vetro a causa delle attivazioni non lineari del modello. 
+	
+	Al contrario, i modelli lineari studiati in questo capitolo definiscono un'equazione globale e trasparente per l'intero dominio composizionale. Sebbene il modello Ridge ottimale richieda centinaia di coefficienti, il peso assegnato a una variabile come l'entalpia di fusione definisce il suo impatto marginale costante e universale per tutti i liquidi del dataset. 
+	
+	I modelli lineari, quindi, non riescono a ridurre il problema della viscosità a una semplice regola euristica di poche variabili, confermando che la dinamica dei liquidi sottoraffreddati è un fenomeno intrinsecamente cooperativo ad alta dimensionalità. Tuttavia, rappresentano un passo in avanti rispetto all'opacità delle reti neurali: offrono una mappa globale delle correlazioni tra composizione e termodinamica, permettendo di quantificare con precisione quali direzioni dello spazio chimico guidino l'arresto dinamico del materiale.
+
 \end{document}

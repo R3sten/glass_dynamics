@@ -41,7 +41,7 @@ def plot_cv_dual_heatmap(
         ax.set_xticklabels(x_labels)
         ax.set_yticks(y_ticks)
         ax.set_yticklabels(y_labels)
-        ax.set_xlabel(r"$L_1$ Ratio (Ridge $\rightarrow$ Lasso)", fontsize=11)
+        ax.set_xlabel(r"$\beta$ (Ridge $\rightarrow$ Lasso)", fontsize=11)
         ax.set_ylabel(r"Regularization Penalty $\alpha$", fontsize=11)
     
     # --- Plot 1: R^2 Heatmap (Dynamic Contrast) ---

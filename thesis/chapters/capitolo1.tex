@@ -1,8 +1,8 @@
-x% DC: punteggiatura attorno a equazioni
 \documentclass[../main.tex]{subfiles}
 
 \begin{document}
 	\chapter{Modelli per lo studio della viscosità}
+	\label{ch:introduzione}
 	% Tutto quello che serve per capire i capitoli dopo
 	
 	\section{Liquidi sottoraffreddati e viscosità}
@@ -23,17 +23,17 @@ x% DC: punteggiatura attorno a equazioni
 	
 	L'andamento della viscosità in funzione della temperatura varia a seconda del liquido sotto esame come mostrato nel cosiddetto grafico di Angell (Fig.~\ref{angell_plot}). In questa rappresentazione, la viscosità (o il tempo di rilassamento strutturale) è riportata in scala semilogaritmica in funzione della temperatura inversa normalizzata $T_g/T$, consentendo di confrontare sistemi caratterizzati da valori di $T_g$ molto differenti.
 	
-	Dal punto di vista cinetico, il flusso viscoso è governato dal superamento di barriere energetiche tra diversi minimi locali del paesaggio energetico (\textit{energy landscape})~\cite{debenedettiSupercooledLiquidsGlass2001}. \dc{attenzione: non so cosa tu volessi dire con cinetica chimico-fisica (!) e stati conformazionali si usa soltanto ed eventualmente nel caso di macromolecole e polimeri; più correttamente le barriere separano diversi minimi locali (e loro bacini di attrazione) nell'energy landscape. Ho quindi corretto} L'energia tipica necessaria al superamento di tali barriere prende il nome di energia di attivazione $E_a$ e definisce la dipendenza termica di un processo attivato secondo l'equazione di Arrhenius
+	Dal punto di vista cinetico, il flusso viscoso è governato dal superamento di barriere energetiche tra diversi minimi locali del paesaggio energetico (\textit{energy landscape})~\cite{debenedettiSupercooledLiquidsGlass2001}. L'energia tipica necessaria al superamento di tali barriere prende il nome di energia di attivazione $E_a$ e definisce la dipendenza termica di un processo attivato secondo l'equazione di Arrhenius
 	\begin{equation}
 		\eta(T) = \eta_\infty \exp\left( \frac{E_a}{k_B T} \right) ,
 	\end{equation}
 	dove $k_B$ è la costante di Boltzmann ed $\eta_\infty$ è una costante dipendente dal sistema~\cite{debenedettiSupercooledLiquidsGlass2001}.
 	
 	Nel grafico di Angell, un liquido che segue rigorosamente l'andamento arrheniano descrive una retta: sistemi di questo genere presentano un'energia di attivazione costante al variare della temperatura e vengono definiti liquidi "forti" (\textit{strong}). L'esempio classico è l'ossido di silicio ($\mathrm{SiO}_2$, il principale costituente del comune vetro delle finestre.
-	Al contrario, i liquidi detti "fragili" (\textit{fragile}) manifestano nel grafico una marcata concavità verso l'alto: in questi materiali la riorganizzazione cooperativa intermolecolare determina un'energia di attivazione effettiva $E(T)$ che cresce in modo rapido e progressivo al diminuire della temperatura verso $T_g$~\cite{debenedettiSupercooledLiquidsGlass2001}. Tale scostamento dalla linearità è quantificato dall'indice di fragilità $m$, definito come la pendenza della curva a $T = T_g$:
+	Al contrario, i liquidi detti "fragili" (\textit{fragile}) manifestano nel grafico una marcata concavità verso l'alto: in questi materiali la riorganizzazione cooperativa intermolecolare determina un'energia di attivazione effettiva $E(T)$ che cresce in modo rapido e progressivo al diminuire della temperatura verso $T_g$~\cite{debenedettiSupercooledLiquidsGlass2001}. Tale scostamento dalla linearità è quantificato dall'indice di fragilità $m$, definito come la pendenza della curva a $T = T_g$
 	%
 	\begin{equation}
-		m = \left. \frac{\mathrm{d} \log_{10} (\eta(T))}{\mathrm{d}(T_g/T)} \right|_{T = T_g}
+		m = \left. \frac{\mathrm{d} \log_{10} (\eta(T))}{\mathrm{d}(T_g/T)} \right|_{T = T_g}.
 	\end{equation}
 	%
 	Valori bassi di $m$ (prossimi al limite teorico arrheniano $m \approx 16$) caratterizzano i liquidi forti, mentre valori elevati ($m > 100$) individuano liquidi particolarmente fragili~\cite{bohmerNonexponentialRelaxationsStrong1993}.
@@ -51,17 +51,17 @@ x% DC: punteggiatura attorno a equazioni
 	\begin{equation}
 		\eta(T) = \eta_\infty \exp \left( \frac{B}{T - T_0} \right) ,
 	\end{equation}
-	dove $B$ è una costante \dc{No, $B$ non è proporzionale all'energia di attivazione. Se assume $E(T)/(k_BT)$ vedi che mentre $B$ è una costante, $E(T)$ diverge a $T_0$} e $T_0$ è la cosiddetta temperatura di Vogel, in corrispondenza della quale il volume libero (o l'entropia configurazionale) si annullerebbe teoricamente, bloccando ogni riarrangiamento strutturale (vedi Fig.~\ref{glass_transition_plot}).
+	dove $B$ è una costante e $T_0$ è la cosiddetta temperatura di Vogel, in corrispondenza della quale il volume libero (o l'entropia configurazionale) si annullerebbe teoricamente, bloccando ogni riarrangiamento strutturale (vedi Fig.~\ref{glass_transition_plot}).
 	
-	Un approccio alternativo sviluppato da Mauro \textit{et al.}~\cite{mauroViscosityGlassformingLiquids2009} conduce alla cosiddetta equazione MYEGA, la quale non presenta alcuna divergenza a temperatura finita \dc{dove hai trovato che divergenza sarebbe non fisica?} e offre una descrizione più accurata nell'intervallo a basse temperature. Il principio fisico del modello MYEGA risiede nell'assumere una dipendenza esponenziale dell'energia di attivazione con la temperatura, associata al progressivo congelamento dei gradi di libertà configurazionali a bassa temperatura
+	Un approccio alternativo sviluppato da Mauro \textit{et al.}~\cite{mauroViscosityGlassformingLiquids2009} conduce alla cosiddetta equazione MYEGA, la quale non presenta alcuna divergenza a temperatura finita e offre una descrizione più accurata nell'intervallo a basse temperature. Il principio fisico del modello MYEGA risiede nell'assumere una dipendenza esponenziale dell'energia di attivazione con la temperatura, associata al progressivo congelamento dei gradi di libertà configurazionali a bassa temperatura
 	\begin{equation}
 		\eta(T) = \eta_\infty \exp \left[ \frac{K}{T} \exp\left( \frac{C}{T} \right) \right] ,
 	\end{equation}
 	dove $K$ e $C$ sono parametri legati, rispettivamente, alla barriera di attivazione ad alta temperatura e alla variazione di entalpia associata alla rottura dei vincoli cooperativi~\cite{mauroViscosityGlassformingLiquids2009}.
-
+	
 	Entrambe le equazioni possono essere convenientemente riscritte sostituendo le costanti fenomenologiche ($B, T_0$ e $K, C$) con i parametri fisicamente misurabili $T_g$ ed $m$. Tale riscrittura, particolarmente adatta alla procedura di fit numerico dei dati sperimentali, verrà illustrata per l'equazione MYEGA nella Sezione~\ref{sec:pipeline_myega}.
-
-
+	
+	
 	\section{Modelli data-driven}
 	\label{sec:modelli_datadriven}
 	
@@ -109,13 +109,13 @@ x% DC: punteggiatura attorno a equazioni
 		\label{fig:neural_network}
 	\end{figure}
 	
-	L'elemento fondamentale di elaborazione è il singolo percettrone (Fig.~\ref{fig:perceptron}), il quale calcola una combinazione lineare pesata degli ingressi $x_i$, vi somma un termine costante $w_0$ (denominato \textit{bias}) e trasforma il risultato attraverso una funzione di attivazione $\sigma(\cdot)$ generalmente non lineare (come la sigmoide, la tangente iperbolica o la funzione ReLU)~\cite{nielsenNeuralNetworksDeep2015}:
+	L'elemento fondamentale di elaborazione è il singolo percettrone (Fig.~\ref{fig:perceptron}), il quale calcola una combinazione lineare pesata degli ingressi $x_i$, vi somma un termine costante $w_0$ (denominato \textit{bias}) e trasforma il risultato attraverso una funzione di attivazione $\sigma(\cdot)$ generalmente non lineare (come la sigmoide, la tangente iperbolica o la funzione ReLU)~\cite{nielsenNeuralNetworksDeep2015}
 	\begin{equation}
 		y = \sigma \left( w_0 + \sum_{i=1}^N w_i x_i \right) .
 	\end{equation}
 	È proprio la funzione di attivazione non lineare a conferire alle reti neurali la capacità di modellizzare relazioni chimico-fisiche complesse tra composizione e proprietà.
-		
-
+	
+	
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[height=3cm]{perceptron.png}
@@ -149,15 +149,15 @@ x% DC: punteggiatura attorno a equazioni
 	Nel caso ideale in cui tutti i descrittori fossero mutuamente ortogonali, la matrice di correlazione coinciderebbe con la matrice identità ($C = I$) e ciascun peso $\hat{w}_i$ equivarrebbe esattamente al coefficiente di correlazione univariato $R[x_i, y]$. Tuttavia, nello studio dei liquidi sottoraffreddati, la presenza di interdipendenze tra le variabili (\textbf{multicollinearità}) rappresenta una condizione intrinseca e inevitabile. Nel caso studiato in questo lavoro, la multicollinearità trae origine da due vincoli fisici fondamentali:
 	\begin{enumerate}
 		\item Il vincolo composizionale di chiusura a somma unitaria ($\sum_i x_i = 100\%$ molare), che introduce una dipendenza lineare esatta nei dati chimici di partenza;
-		\item L'estrazione ad alta dimensionalità dei descrittori chimico-fisici (vedi Sec.~\ref{sec:feature_extraction}), i quali ereditano le forti correlazioni reciproche delle proprietà della tavola periodica (ad esempio tra raggi ionici, volumi atomici, elettronegatività e parametri di valenza).
+		\item L'estrazione ad alta dimensionalità dei descrittori chimico-fisici (vedi Sez.~\ref{sec:feature_extraction}), i quali ereditano le forti correlazioni reciproche delle proprietà della tavola periodica (ad esempio tra raggi ionici, volumi atomici, elettronegatività e parametri di valenza).
 	\end{enumerate}
 	
 	Una dipendenza quasi-lineare tra le colonne della matrice $X$ rende $C$ fortemente mal condizionata: l'autovalore minimo tende a zero e di conseguenza l'operazione di inversione matriciale $C^{-1}$ diviene numericamente instabile e sensibile a minime perturbazioni nei dati.
 	Come evidenziato da Sharma \textit{et al.}~\cite{sharmaInterpretabilityLinearRegression2026}, tale instabilità riduce drasticamente l'interpretabilità dei pesi OLS: variabili contigue o fisicamente simili tendono ad assumere coefficienti divergenti di segno opposto che si elidono a vicenda, generando un profilo disordinato e oscillatorio. Il valore e il segno di $\hat{w}_i$ cessano dunque di riflettere l'effettiva importanza del descrittore nel fenomeno del flusso viscoso. 
 	
-	Per superare queste limitazioni computazionali e investigare in modo rigoroso la frontiera tra accuratezza predittiva e trasparenza fenomenologica, sono state considerate \dc{da chi?} quattro distinte strategie metodologiche. \dc{evita di usare un linguaggio troppo metaforico, es. patologia, vulnerabile, distrugge, degenerazioni, ...}
+	Per superare queste limitazioni computazionali e investigare in modo rigoroso la frontiera tra accuratezza predittiva e trasparenza fenomenologica, in questo lavoro sono state considerate quattro distinte strategie metodologiche.
 	
-	\subsection{Regressione Ridge}
+	\subsection{Ridge Regression}
 	\label{sec:ridge_intro}
 	
 	La regressione Ridge (o regolarizzazione $L_2$) interviene direttamente sull'instabilità di inversione introducendo una penalizzazione quadratica sulla norma euclidea dei coefficienti~\cite{hoerlRidgeRegressionBiased1970}
@@ -184,9 +184,9 @@ x% DC: punteggiatura attorno a equazioni
 	\subsection{Regressione Elastic Net}
 	\label{sec:elastic_net_intro}
 	
-	Per coniugare la stabilità numerica nei confronti della collinearità con una selezione automatica delle variabili, si ricorre alla regressione Elastic Net~\cite{sharmaInterpretabilityLinearRegression2026}. La funzione obiettivo include contemporaneamente una penalizzazione $L_1$ (Lasso)~\cite{hastieLinearMethodsRegression2009} e una penalizzazione quadratica $L_2$ (Ridge)
+	Per coniugare la stabilità numerica nei confronti della collinearità con una selezione automatica delle variabili, si ricorre alla regressione Elastic Net~\cite{sharmaInterpretabilityLinearRegression2026}. La funzione obiettivo include contemporaneamente una penalizzazione $L_1$ (Lasso)~\cite{hastieElementsStatisticalLearning2009} e una penalizzazione quadratica $L_2$ (Ridge)
 	\begin{equation}
-		\mathcal{L}_{\text{EN}}(\mathbf{w}) = \|\mathbf{y} - X \mathbf{w}\|_2^2 + \lambda_1 \|\mathbf{w}\|_1 + \frac{\lambda_2}{2} \|\mathbf{w}\|_2^2 
+		\mathcal{L}_{\text{EN}}(\mathbf{w}) = \|\mathbf{y} - X \mathbf{w}\|_2^2 + \lambda_1 \|\mathbf{w}\|_1 + \frac{\lambda_2}{2} \|\mathbf{w}\|_2^2,
 	\end{equation}
 	oppure, introducendo la parametrizzazione $\alpha = \lambda_1 + \lambda_2$ e il rapporto di miscelazione $\beta = \lambda_1 / (\lambda_1 + \lambda_2) \in [0, 1]$~\cite{sharmaInterpretabilityLinearRegression2026},
 	\begin{equation}
@@ -194,7 +194,7 @@ x% DC: punteggiatura attorno a equazioni
 	\end{equation}
 	dove i casi limite $\beta = 0$ e $\beta = 1$ corrispondono rispettivamente alla regressione Ridge e alla pura regressione Lasso.
 	
-	La regolarizzazione $L_1$ possiede la proprietà geometrica di contrarre esattamente a zero i coefficienti dei descrittori non informativi o ridondanti, producendo una soluzione intrinsecamente sparsa. A differenza del Lasso puro, che in presenza di variabili collineari tende a selezionarne arbitrariamente una sola trascurando le altre, la presenza del termine $L_2$ stabilizza il percorso di regolarizzazione. Questo permette di selezionare gruppi compatti di variabili correlate senza incorrere in instabilità~\cite{hastieLinearMethodsRegression2009}.
+	La regolarizzazione $L_1$ possiede la proprietà geometrica di contrarre esattamente a zero i coefficienti dei descrittori non informativi o ridondanti, producendo una soluzione intrinsecamente sparsa. A differenza del Lasso puro, che in presenza di variabili collineari tende a selezionarne arbitrariamente una sola trascurando le altre, la presenza del termine $L_2$ stabilizza il percorso di regolarizzazione. Questo permette di selezionare gruppi compatti di variabili correlate senza incorrere in instabilità~\cite{hastieElementsStatisticalLearning2009}.
 	
 	\subsection{Regressione su Componenti Principali (PCR)}
 	\label{sec:pcr_intro}
@@ -211,6 +211,6 @@ x% DC: punteggiatura attorno a equazioni
 	\end{equation}
 	eliminando ogni interferenza di collinearità per costruzione.
 	
-	La riduzione dimensionale si ottiene trattenendo un sottospazio di $P \ll M$ componenti. Come dimostrato da Sharma et al.~\cite{sharmaInterpretabilityLinearRegression2026}, nei sistemi vetrosi l'approccio non supervisionato classico (ovvero trattenere le componenti con il valore più alto di $\lambda$, ossia che spiegano la massima varianza strutturale) non è ottimale, poiché le prime componenti spesso non contengono informazione correlata alla risposta dinamica. Risulta quindi necessario adottare uno schema di selezione supervisionato, ordinando e selezionando le componenti in base al valore assoluto di correlazione $|R[\tilde{X}^{(f)}, y]|$ (\textbf{Supervised Principal Component Regression (SPCR)}). Questo approccio consente di quantificare in modo diretto il compromesso fra il contenimento della complessità dimensionale e la preservazione dell'accuratezza predittiva sulla viscosità.
-
+	La riduzione dimensionale si ottiene trattenendo un sottospazio di $P \ll M$ componenti. Come dimostrato da Sharma~\textit{et al.}~\cite{sharmaInterpretabilityLinearRegression2026}, nei sistemi vetrosi l'approccio non supervisionato classico (ovvero trattenere le componenti con il valore più alto di $\lambda$, ossia che spiegano la massima varianza strutturale) non è ottimale, poiché le prime componenti spesso non contengono informazione correlata alla risposta dinamica. Risulta quindi necessario adottare uno schema di selezione supervisionato, ordinando e selezionando le componenti in base al valore assoluto di correlazione $|R[\tilde{X}^{(f)}, y]|$ (\textbf{Supervised Principal Component Regression (SPCR)}). Questo approccio consente di quantificare in modo diretto il compromesso fra il contenimento della complessità dimensionale e la preservazione dell'accuratezza predittiva sulla viscosità.
+	
 \end{document}

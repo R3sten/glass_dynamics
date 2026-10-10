@@ -37,12 +37,29 @@
 		\text{MedAE} = \text{mediana}(|y_1 - \hat{y}_1|, |y_2 - \hat{y}_2|, \dots, |y_N - \hat{y}_N|)
 	\end{equation}
 	
-
-
+	%B
+	\chapter{Grafici iperparametri}
+	\label{app:grafici_iperparametri}
+	
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[trim=0cm 0cm 0cm 0.8cm, clip, height=5cm]{performance/ridge/Tg_fitted.pdf}
+		\includegraphics[trim=0cm 0cm 0cm 0.8cm, clip, height=5cm]{performance/ridge/m_fitted.pdf}
+		\includegraphics[trim=0cm 0cm 0cm 0.8cm, clip, height=5cm]{performance/ridge/log_eta_inf_fitted.pdf}
+		\caption{Ridge performance plots vs alpha}
+		\label{fig:ridge_performance}
+	\end{figure}
+	
+	%C
+	\chapter{Grafici performance e residui}
+	\label{app:grafici_performance_residui}
+	
+	%D
 	\chapter{Features e Componenti Principali}
 	\label{app:features}
 	
-	In questa appendice sono riportate le prime 10 variabili predittive (in base al valore assoluto del peso assegnato dal modello) per ciascun approccio di regressione e per ogni parametro termodinamico ($T_g$, $m$, $\log_{10}\eta_\infty$). Assieme alle tabelle ci sono i grafici dell'importanza di tutte le \textit{features} per ogni \textit{target}.
+	In questa appendice sono riportate le prime 10 variabili predittive (in base al valore assoluto del peso assegnato dal modello) per ciascun approccio di regressione e per ogni parametro termodinamico ($T_g$, $m$, $\log_{10}\eta_\infty$).
+	Assieme alle tabelle ci sono i grafici dell'importanza di tutte le \textit{features} per ogni \textit{target}.
 	
 	\section*{Regressione Ridge}
 	
@@ -74,6 +91,7 @@
 			\centering
 			\includegraphics[trim=0.7cm 0cm 25cm 0.7cm, clip, width=\linewidth]{importanza_features/ridge_features_importance.pdf}
 			\captionof{figure}{Importanza delle features per $T_g$.}
+			\label{fig:ridge_features_tg}
 		\end{minipage}
 	\end{table}
 	
@@ -247,16 +265,16 @@
 					\toprule
 					\textbf{Rank} & \textbf{Feature} & \textbf{Peso} \\
 					\midrule
-					1 & W\_Sum\_NsUnfilled & $-0.140$ \\
-					2 & W\_Sum\_NsValence & $0.139$ \\
-					3 & A\_Std\_zeff & $-0.132$ \\
-					4 & W\_Sum\_GSbandgap & $-0.130$ \\
-					5 & A\_Max\_vdw\_radius\_uff & $0.107$ \\
-					6 & W\_Std\_density & $-0.095$ \\
-					7 & W\_Max\_GSbandgap & $-0.074$ \\
-					8 & A\_Std\_NpUnfilled & $0.066$ \\
-					9 & A\_Std\_NUnfilled & $0.052$ \\
-					10 & A\_Max\_FusionEnthalpy & $0.049$ \\
+					1 & W\_Sum\_GSbandgap & $-0.224$ \\
+					2 & W\_Sum\_NsUnfilled & $-0.194$ \\
+					3 & W\_Sum\_NsValence & $0.194$ \\
+					4 & W\_Std\_density & $-0.102$ \\
+					5 & W\_Max\_GSbandgap & $-0.088$ \\
+					6 & A\_Std\_zeff & $-0.085$ \\
+					7 & A\_Max\_vdw\_radius\_uff & $0.081$ \\
+					8 & A\_Max\_zeff & $-0.071$ \\
+					9 & A\_Max\_FusionEnthalpy & $0.064$ \\
+					10 & A\_Max\_NpUnfilled & $0.063$ \\
 					\bottomrule
 				\end{tabular}%
 			}
@@ -278,16 +296,16 @@
 					\toprule
 					\textbf{Rank} & \textbf{Feature} & \textbf{Peso} \\
 					\midrule
-					1 & W\_Sum\_ElectronAffinity & $-0.201$ \\
-					2 & A\_Max\_FusionEnthalpy & $-0.119$ \\
-					3 & W\_Max\_SpaceGroupNumber & $-0.112$ \\
-					4 & W\_Std\_num\_oxistates & $-0.101$ \\
-					5 & W\_Sum\_num\_oxistates & $-0.080$ \\
-					6 & W\_Sum\_NdValence & $0.067$ \\
-					7 & A\_Min\_heat\_of\_formation & $0.057$ \\
-					8 & W\_Max\_num\_oxistates & $-0.055$ \\
-					9 & A\_Max\_ElectronAffinity & $0.051$ \\
-					10 & A\_Max\_mendeleev\_number & $0.051$ \\
+					1 & W\_Sum\_ElectronAffinity & $-0.232$ \\
+					2 & A\_Max\_FusionEnthalpy & $-0.142$ \\
+					3 & W\_Max\_SpaceGroupNumber & $-0.103$ \\
+					4 & W\_Std\_num\_oxistates & $-0.096$ \\
+					5 & W\_Sum\_num\_oxistates & $-0.090$ \\
+					6 & W\_Sum\_NdValence & $0.079$ \\
+					7 & A\_Min\_heat\_of\_formation & $0.071$ \\
+					8 & W\_Std\_c6\_gb & $0.069$ \\
+					9 & A\_Max\_ElectronAffinity & $0.063$ \\
+					10 & A\_Max\_mendeleev\_number & $0.063$ \\
 					\bottomrule
 				\end{tabular}%
 			}
@@ -309,16 +327,16 @@
 					\toprule
 					\textbf{Rank} & \textbf{Feature} & \textbf{Peso} \\
 					\midrule
-					1 & W\_Max\_NsUnfilled & $0.108$ \\
-					2 & W\_Sum\_vdw\_radius\_uff & $-0.051$ \\
-					3 & A\_Max\_calc\_en\_sanderson & $-0.012$ \\
-					4 & A\_Max\_vdw\_radius\_uff & $-0.011$ \\
-					5 & A\_Max\_GSmagmom & $-0.006$ \\
-					6 & A\_Sum\_GSmagmom & $-0.006$ \\
-					7 & W\_Sum\_NUnfilled & $-0.005$ \\
-					8 & A\_Std\_NdValence & $0.004$ \\
-					9 & A\_Std\_electrons & $0.004$ \\
-					10 & A\_Std\_protons & $0.004$ \\
+					1 & W\_Max\_NsUnfilled & $0.125$ \\
+					2 & W\_Sum\_vdw\_radius\_uff & $-0.089$ \\
+					3 & A\_Max\_calc\_en\_sanderson & $-0.023$ \\
+					4 & A\_Max\_vdw\_radius\_uff & $-0.019$ \\
+					5 & W\_Min\_dipole\_polarizability & $-0.017$ \\
+					6 & A\_Max\_GSmagmom & $-0.016$ \\
+					7 & A\_Sum\_GSmagmom & $-0.016$ \\
+					8 & A\_Std\_electrons & $0.014$ \\
+					9 & A\_Std\_protons & $0.013$ \\
+					10 & A\_Std\_atomic\_number & $0.013$ \\
 					\bottomrule
 				\end{tabular}%
 			}
@@ -400,10 +418,9 @@
 	\begin{figure}[htbp]
 		\centering
 		\includegraphics[trim=0cm 0cm 0cm 0.7cm, clip, width=\textwidth]{importanza_features/pcr_features_importance.pdf}
-		\vspace{0.5cm} % Spazio tra i due grafici
-		% Grafico della proiezione delle PC (sostituire il nome file)
+		\vspace{0.5cm}
 		\includegraphics[trim=0cm 0cm 0cm 0.7cm, clip, width=\textwidth]{importanza_features/pcr_projected_features_importance.pdf}
-		\caption{In alto: Importanza delle Componenti Principali ($P=15$) per la predizione di $T_g$, $m$ e $\log_{10}\eta_\infty$ (PCR). In basso: Pesi delle proiezioni delle PC nello spazio delle originali \textit{features} chimico-fisiche.}
+		\caption{In alto: Importanza delle Componenti Principali ($P=14$) per la predizione di $T_g$, $m$ e $\log_{10}\eta_\infty$ (PCR). In basso: Pesi delle proiezioni delle PC nello spazio delle originali \textit{features} chimico-fisiche.}
 		\label{fig:pcr_plots}
 	\end{figure}
 	
@@ -478,11 +495,9 @@
 		\includegraphics[trim=0cm 0cm 0cm 0.7cm, clip, width=\textwidth]{importanza_features/spcr_features_importance.pdf}
 		\vspace{0.5cm}
 		\includegraphics[trim=0cm 0cm 0cm 0.7cm, clip, width=\textwidth]{importanza_features/spcr_projected_features_importance.pdf}
-		\caption{In alto: Importanza delle Componenti Principali  ($P=10$) per la predizione di $T_g$, $m$ e $\log_{10}\eta_\infty$ (Supervised PCR). In basso: Pesi delle proiezioni delle PC supervisionate nello spazio delle \textit{features} chimico-fisiche originali.}
+		\caption{In alto: Importanza delle Componenti Principali  ($P=12$) per la predizione di $T_g$, $m$ e $\log_{10}\eta_\infty$ (Supervised PCR). In basso: Pesi delle proiezioni delle PC supervisionate nello spazio delle \textit{features} chimico-fisiche originali.}
 		\label{fig:spcr_plots}
 	\end{figure}
 	
-	\chapter{Grafici}
-	\label{app:grafici}
 	
 \end{document}
