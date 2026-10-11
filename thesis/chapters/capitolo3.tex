@@ -16,7 +16,7 @@
 	La Figura~\ref{fig:ridge_weights} mostra l'evoluzione dei coefficienti di regressione (pesi) per il target $T_g$ in funzione di $\alpha$. Per facilitare la visualizzazione congiunta, i pesi di ciascuna \textit{feature} sono stati normalizzati rispetto al loro valore massimo in modulo. 
 	L'impiego di partizioni multiple permette di estrarre due informazioni statistiche importanti. La media dei pesi su tutti gli \textit{split} (rappresentata dalle linee continue) fa emergere il segnale stabile, filtrando il rumore statistico legato al singolo campionamento. La deviazione standard (rappresentata dalle bande sfumate), al contrario, funge da indicatore di instabilità: quantifica quanto l'importanza assegnata a una specifica variabile fluttui al variare dei dati di ingresso.
 	
-	Come si osserva visivamente dal grafico, nel limite $\alpha \to 0$ (corrispondente alla stima OLS non regolarizzata), le bande di deviazione standard risultano estremamente ampie. In questo regime il modello è dominato dalla multicollinearità: i pesi assumono valori caotici e divergenti, rendendo inaffidabile qualsiasi interpretazione fisica. Man mano che la penalità $\alpha$ aumenta, la deviazione standard diminuisce. Il punto in cui le bande si restringono segna la soglia in cui la regolarizzazione ha efficacemente attutito la multicollinearità. Tuttavia, si osserva anche che i valori medi dei pesi continuano a incrociarsi e oscillare senza far emergere un singolo modello stabile.
+	Come si osserva visivamente dal grafico, nel limite $\alpha \to 0$ (corrispondente alla stima OLS non regolarizzata), le bande di deviazione standard risultano estremamente ampie. In questo regime il modello è dominato dalla multicollinearità: i pesi assumono valori caotici e divergenti, rendendo inaffidabile qualsiasi interpretazione fisica. Man mano che la penalità $\alpha$ aumenta, la deviazione standard diminuisce. Il punto in cui le bande si restringono \dc{però non si vede nessun punto in cui chiaramente ciò avviene...} segna la soglia in cui la regolarizzazione ha efficacemente attutito la multicollinearità. Tuttavia, si osserva anche che i valori medi dei pesi continuano a incrociarsi e oscillare senza far emergere un singolo modello stabile. \dc{su questo sono d'accordo}
 
 	\begin{figure}[htbp]
 		\centering
@@ -25,7 +25,7 @@
 		\label{fig:ridge_weights}
 	\end{figure}
 	
-	Il valore ottimale di $\alpha$ deve bilanciare la stabilizzazione con la preservazione dell'accuratezza del modello. La Figura~\ref{fig:ridge_performance_viscosity} mostra l'andamento delle metriche di performance globali sulla viscosità ($R^2$ e RMSE). In accordo con quanto evidenziato da Sharma~\textit{et al.}~\cite{sharmaInterpretabilityLinearRegression2026}, un valore di $\alpha = 0.1$ risulta essere un buon compromesso. Come troverà ulteriore conferma nell'analisi successiva, tale penalizzazione stabilizza i coefficienti senza degradare il potere predittivo del modello. I grafici delle performance sui singoli target sono riportati nell'Appendice~\ref{app:grafici_iperparametri}.
+	Il valore ottimale di $\alpha$ deve bilanciare la stabilizzazione \dc{dei pesi?} con la preservazione dell'accuratezza del modello. La Figura~\ref{fig:ridge_performance_viscosity} mostra l'andamento delle metriche di performance globali sulla viscosità ($R^2$ e RMSE). In accordo con quanto evidenziato da Sharma~\textit{et al.}~\cite{sharmaInterpretabilityLinearRegression2026}, un valore di $\alpha = 0.1$ risulta essere un buon compromesso. Come troverà ulteriore conferma nell'analisi successiva, tale penalizzazione stabilizza i coefficienti senza degradare il potere predittivo del modello. I grafici delle performance sui singoli target sono riportati nell'Appendice~\ref{app:grafici_iperparametri}.
 	
 	\begin{figure}[htbp]
 		\centering
@@ -36,7 +36,7 @@
 	
 	\subsection{Elastic Net}
 	
-	Il modello Elastic Net introduce un ulteriore grado di libertà, richiedendo l'ottimizzazione congiunta del parametro di regolarizzazione $\alpha$ e del rapporto di miscelazione $\beta \in [0, 1]$, il quale modula il bilanciamento tra norma $L_1$ (Lasso, che induce sparsità) e norma $L_2$ (Ridge). La calibrazione è stata effettuata tramite una \textit{cross-validation} a 5 \textit{fold} sull'intero set di \textit{training}.
+	Il modello Elastic Net introduce un ulteriore grado di libertà, richiedendo l'ottimizzazione congiunta del parametro di regolarizzazione $\alpha$ e del rapporto di miscelazione $\beta \in [0, 1]$, il quale modula il bilanciamento tra norma $L_1$ (Lasso, che induce sparsità) e norma $L_2$ (Ridge). La calibrazione \dc{di cosa?} è stata effettuata tramite una \textit{cross-validation} a 5 \textit{fold} sull'intero set di \textit{training}.
 	
 	\begin{figure}[htbp]
 		\centering
@@ -45,7 +45,7 @@
 		\label{fig:elastic_performance_viscosity}
 	\end{figure}
 	
-	La \textit{heatmap} in Fig.~\ref{fig:elastic_performance_viscosity} mappa le metriche $R^2$ e RMSE al variare della combinazione dei due iperparametri. Le prestazioni ottimali si concentrano nella regione a basso $\beta$ confermando l'efficacia della pura regolarizzazione Ridge. In particolare, il massimo corrispondente a $\beta = 0$ e $\alpha = 0.1$. Aumentare la sparsità (spostandosi verso destra sull'asse $\beta$) comporta una perdita di informazioni che si traduce in un abbassamento dell'accuratezza. L'assenza di un modello sparso in grado di competere con il modello denso suggerisce che non ci sia un sottoinsieme ristretto e rappresentativo tra le \textit{features} introdotte capace di spiegare da solo la varianza della viscosità. Al contrario, sembra essere il contributo globale dell'intero spazio dei descrittori a fornire l'informazione necessaria per ottenere dei risultati accurati.
+	La \textit{heatmap} in Fig.~\ref{fig:elastic_performance_viscosity} mappa le metriche $R^2$ e RMSE al variare della combinazione dei due iperparametri. Le prestazioni ottimali si concentrano nella regione a basso $\beta$ confermando l'efficacia della pura regolarizzazione Ridge. In particolare, il massimo corrisponde a $\beta = 0$ e $\alpha = 0.1$. Aumentare la sparsità (spostandosi verso destra sull'asse $\beta$) comporta una perdita di informazioni che si traduce in un abbassamento dell'accuratezza. \dc{di quanto? è ovvio che perdi dell'informazione, ma magari non così tanto} L'assenza di un modello sparso in grado di competere con il modello denso suggerisce che non ci sia un sottoinsieme ristretto e rappresentativo tra le \textit{features} introdotte capace di spiegare da solo la varianza della viscosità. Al contrario, sembra essere il contributo globale dell'intero spazio dei descrittori a fornire l'informazione necessaria per ottenere dei risultati accurati. \dc{aggiungerei un breve e onesto commento circa il comportamento non monotono delle performance, che resterebbe da spiegare}
 	
 	Nonostante ciò, al fine di proseguire l'indagine sull'interpretabilità, per questo lavoro si è scelto di selezionare arbitrariamente la configurazione $\alpha = 0.1$ e $\beta = 0.8$. Tale scelta mira a testare esplicitamente un modello che tenta di unire la stabilità della regolarizzazione quadratica a un elevato grado di sparsità, pur con la consapevolezza della perdita di accuratezza intrinseca di questa configurazione. Le \textit{heatmap} relative ai singoli target termodinamici sono consultabili nell'Appendice~\ref{app:grafici_iperparametri}.
 	
@@ -57,7 +57,7 @@
 	
 	Comportamenti differenti emergono invece adottando la variante supervisionata (SPCR, Figura~\ref{fig:spcr_performance_viscosity}), in cui le componenti sono preventivamente ordinate in base al valore assoluto della loro correlazione (di Pearson) con le grandezze target. In primo luogo, l'approccio supervisionato consente di raggiungere prestazioni superiori impiegando un numero inferiore di componenti ($P=12$). In secondo luogo, le metriche relative ai singoli parametri di MYEGA in SPCR (riportate in Appendice~\ref{app:grafici_iperparametri} nella Figura~\ref{fig:app_spcr_targets}) mostrano per costruzione una crescita rigorosamente monotona all'aumentare di $P$, comportamento che non si verifica nella PCR standard.
 	
-	Questa discrepanza implica che la maggior parte della varianza intrinseca del dataset di partenza costituisce di fatto "rumore" rispetto al fenomeno della viscosità.
+	Questa discrepanza implica che la maggior parte della varianza intrinseca del dataset di partenza costituisce di fatto "rumore" rispetto all'andamento della viscosità in funzione della temperatura.
 
 	\begin{figure}[htbp]
 		\centering
@@ -169,7 +169,7 @@
 	
 	\subsection{Analisi dei residui}
 	
-	La dipendenza dell'accuratezza dalla composizione chimica è quantificata in Figura~\ref{fig:distance}, dove il RMSE viene tracciato in funzione della distanza chimica di Canberra dal \textit{training set}~\cite{cassarViscNetNeuralNetwork2021}. L'aumento progressivo dell'errore per le formulazioni atipiche riflette il limite di estrapolazione comune a tutti i modelli \textit{data-driven}~\cite{torraChapter4Data2023}. Tale andamento è condiviso da tutti i modelli analizzati.
+	La dipendenza dell'accuratezza dalla composizione chimica è quantificata in Figura~\ref{fig:distance}, dove il RMSE viene tracciato in funzione della distanza chimica di Canberra dal \textit{training set}~\cite{cassarViscNetNeuralNetwork2021}. L'aumento progressivo dell'errore per le formulazioni \dc{cosa intendi per formulazioni? forse composizioni?} atipiche riflette il limite di estrapolazione comune a tutti i modelli \textit{data-driven}~\cite{torraChapter4Data2023}. Tale andamento è condiviso da tutti i modelli analizzati.
 	
 	\begin{figure}[htbp]
 		\centering
@@ -192,7 +192,7 @@
 	\section{Interpretabilità fisica e analisi delle features}
 	\label{sec:interpretabilita}
 	
-	L'impiego di modelli di regressione lineare in questo studio è stato motivato dalla necessità di superare la natura opaca delle reti neurali, ricercando un'architettura in cui le soluzioni ammettano una lettura fisica diretta. In un modello lineare ideale, il segno e la magnitudo di ciascun peso indicano in modo inequivocabile l'influenza della rispettiva \textit{feature} sull'output. 
+	L'impiego di modelli di regressione lineare in questo studio è stato motivato dalla necessità di superare la natura opaca delle reti neurali, ricercando un'architettura in cui le soluzioni ammettano una lettura fisica diretta. In un modello lineare ideale, il segno e il modulo di ciascun peso indicano in modo inequivocabile l'influenza della rispettiva \textit{feature} sull'output. \dc{ideal nel senso che non hai gli artefatti, tipo oscillazioni, dovuti alla collinearità?}
 	
 	Per valutare l'effettiva interpretabilità dei modelli adottati, i pesi assegnati alle 560 \textit{features} iniziali sono stati estratti e mediati su 100 partizioni indipendenti del dataset di \textit{training}. Questo approccio garantisce che l'importanza assegnata a ciascun descrittore sia statisticamente affidabile rispetto al rumore intrinseco dei dati. Le classifiche delle prime dieci \textit{features} per importanza assoluta e le distribuzioni globali dei pesi sono riportate nell'Appendice \ref{app:features}.
 	
@@ -227,6 +227,6 @@
 	
 	Al contrario, i modelli lineari studiati in questo capitolo definiscono un'equazione globale e trasparente per l'intero dominio composizionale. Sebbene il modello Ridge ottimale richieda centinaia di coefficienti, il peso assegnato a una variabile come l'entalpia di fusione definisce il suo impatto marginale costante e universale per tutti i liquidi del dataset. 
 	
-	I modelli lineari, quindi, non riescono a ridurre il problema della viscosità a una semplice regola euristica di poche variabili, confermando che la dinamica dei liquidi sottoraffreddati è un fenomeno intrinsecamente cooperativo ad alta dimensionalità. Tuttavia, rappresentano un passo in avanti rispetto all'opacità delle reti neurali: offrono una mappa globale delle correlazioni tra composizione e termodinamica, permettendo di quantificare con precisione quali direzioni dello spazio chimico guidino l'arresto dinamico del materiale.
+	I modelli lineari, quindi, non riescono a ridurre il problema della viscosità a una semplice regola euristica di poche variabili, confermando che la dinamica dei liquidi sottoraffreddati è un fenomeno intrinsecamente cooperativo difficile da ridurre a un piccolo numero di variabili rilevanti. \dc{ho riscritto un po' la frase prima} Tuttavia, rappresentano un passo in avanti rispetto all'opacità delle reti neurali: offrono una mappa globale delle correlazioni tra composizione e termodinamica, permettendo di quantificare con precisione quali direzioni dello spazio chimico guidino l'arresto dinamico del materiale. \dc{aggiungerei che sorprendentemente producono in minore bias nella stima della viscosità a bassa T rispetto alle reti neurali}
 
 \end{document}
