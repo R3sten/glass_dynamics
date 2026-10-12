@@ -106,7 +106,7 @@ def plot_normalized_traces(
     
     # Draw a horizontal line at 0 for visual reference
     ax.axhline(0, color='black', linestyle='--', linewidth=1, alpha=0.5)
-    ax.axvline(x=0.1, color="grey", linestyle=":", linewidth=1.5, alpha=0.8)
+    ax.axvline(x=0.01, color="grey", linestyle=":", linewidth=1.5, alpha=0.8)
     
     # 5. Colorbar generation
     # Maps the feature index to the colormap purely for visual reference

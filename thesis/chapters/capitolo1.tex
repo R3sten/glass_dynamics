@@ -140,9 +140,9 @@
 	\section{Il problema della multicollinearità}
 	\label{sec:multicollinearita}
 	
-	Nel modello lineare, Eq.~\eqref{eq:linear_regression}, l'approccio canonico per determinare il vettore dei pesi $\mathbf{w}$ si basa sulla stima dei minimi quadrati (OLS, \textit{Ordinary Least Squares}). Assumendo descrittori e target standardizzati a media nulla e varianza unitaria, la soluzione analitica si esprime in forma chiusa come
+	Nel modello lineare, Eq.~\eqref{eq:linear_regression}, l'approccio canonico per determinare il vettore dei pesi $\mathbf{w}$ si basa sulla stima dei minimi quadrati (OLS, \textit{Ordinary Least Squares}). Assumendo descrittori e target standardizzati a media nulla e varianza unitaria, la soluzione analitica si esprime in forma chiusa come:
 	\begin{equation}
-		\hat{\mathbf{w}}_{\text{OLS}} = (X^T X)^{-1} X^T \mathbf{y} = C^{-1} R[X, y] ,
+		\hat{\mathbf{w}}_{\text{OLS}} = (X^T X)^{-1} X^T \mathbf{y} = \left(\frac{1}{N_s}X^T X\right)^{-1} \left(\frac{1}{N_s}X^T \mathbf{y}\right) = C^{-1} R[X, y] ,
 	\end{equation}
 	dove $X$ è la matrice dei dati sperimentali di dimensione $N_s \times M$ ($N_s$ è il numero di campioni mentre $M$ è il numero di \textit{features}), $C = \frac{1}{N_s} X^T X$ è la matrice di correlazione empirica tra le variabili predittive e $R[X, y]$ è il vettore dei coefficienti di correlazione di Pearson tra ciascuna \textit{feature} e la grandezza target~\cite{sharmaInterpretabilityLinearRegression2026}.
 	
@@ -160,15 +160,17 @@
 	\subsection{Ridge Regression}
 	\label{sec:ridge_intro}
 	
-	La regressione Ridge (o regolarizzazione $L_2$) interviene direttamente sull'instabilità di inversione introducendo una penalizzazione quadratica sulla norma euclidea dei coefficienti~\cite{hoerlRidgeRegressionBiased1970}
+	La regressione Ridge (o regolarizzazione $L_2$) interviene direttamente sull'instabilità di inversione introducendo una penalizzazione quadratica sulla norma euclidea dei coefficienti~\cite{hoerlRidgeRegressionBiased1970}. Per mantenere l'iperparametro di regolarizzazione indipendente dalla dimensione del dataset, la funzione di perdita viene normalizzata sul numero di campioni $N$, come adottato da Sharma~\textit{et al.}~\cite{sharmaInterpretabilityLinearRegression2026}:
 	\begin{equation}
-		\mathcal{L}_{\text{Ridge}}(\mathbf{w}) = \|\mathbf{y} - X \mathbf{w}\|_2^2 + \alpha \|\mathbf{w}\|_2^2 ,
+		\mathcal{L}_{\text{Ridge}}(\mathbf{w}) = \frac{1}{2N} ||\mathbf{y} - X\mathbf{w}||_2^2 + \frac{\alpha}{2} ||\mathbf{w}||_2^2
+		\label{eq:ridge_loss}
 	\end{equation}
-	dove $\alpha > 0$ è il parametro di regolarizzazione. La soluzione analitica diviene
+	dove $\alpha > 0$ è il parametro di regolarizzazione. Ponendo il gradiente a zero, la soluzione analitica diviene:
 	\begin{equation}
-		\hat{\mathbf{w}}_{\text{Ridge}} = (X^T X + \alpha I)^{-1} X^T \mathbf{y} = (C + \alpha I)^{-1} R[X, y] .
+		\hat{\mathbf{w}}_{\text{Ridge}} = \left(\frac{1}{N}X^T X + \alpha I\right)^{-1} \left(\frac{1}{N}X^T \mathbf{y}\right) = (C + \alpha I)^{-1} R[X, y]
+		\label{eq:ridge_solution}
 	\end{equation}
-	L'aggiunta della costante scalare $\alpha$ lungo la diagonale principale trasla uniformemente tutti gli autovalori di $C$, garantendo che $(C + \alpha I)$ sia strettamente definita positiva. Ciò sopprime alla radice le oscillazioni spurie e l'instabilità computazionale tipica di OLS.
+	L'aggiunta della costante scalare $\alpha$ lungo la diagonale principale trasla uniformemente tutti gli autovalori della matrice di correlazione $C$, garantendo che $(C + \alpha I)$ sia strettamente definita positiva. Ciò sopprime alla radice le oscillazioni spurie e l'instabilità computazionale tipica dei minimi quadrati ordinari (OLS).
 	
 	\subsection{Filtraggio VIF}
 	\label{sec:vif_intro}
@@ -184,9 +186,9 @@
 	\subsection{Regressione Elastic Net}
 	\label{sec:elastic_net_intro}
 	
-	Per coniugare la stabilità numerica nei confronti della collinearità con una selezione automatica delle variabili, si ricorre alla regressione Elastic Net~\cite{sharmaInterpretabilityLinearRegression2026}. La funzione obiettivo include contemporaneamente una penalizzazione $L_1$ (Lasso)~\cite{hastieElementsStatisticalLearning2009} e una penalizzazione quadratica $L_2$ (Ridge)
+	Per coniugare la stabilità numerica nei confronti della collinearità con una selezione automatica delle variabili, si ricorre alla regressione Elastic Net~\cite{sharmaInterpretabilityLinearRegression2026}. La funzione obiettivo include contemporaneamente una penalizzazione $L_1$ (Lasso)~\cite{hastieElementsStatisticalLearning2009} e una penalizzazione quadratica $L_2$ (Ridge):
 	\begin{equation}
-		\mathcal{L}_{\text{EN}}(\mathbf{w}) = \|\mathbf{y} - X \mathbf{w}\|_2^2 + \lambda_1 \|\mathbf{w}\|_1 + \frac{\lambda_2}{2} \|\mathbf{w}\|_2^2,
+		\mathcal{L}_{\text{EN}}(\mathbf{w}) = \frac{1}{2N} \|\mathbf{y} - X \mathbf{w}\|_2^2 + \lambda_1 \|\mathbf{w}\|_1 + \frac{\lambda_2}{2} \|\mathbf{w}\|_2^2,
 	\end{equation}
 	oppure, introducendo la parametrizzazione $\alpha = \lambda_1 + \lambda_2$ e il rapporto di miscelazione $\beta = \lambda_1 / (\lambda_1 + \lambda_2) \in [0, 1]$~\cite{sharmaInterpretabilityLinearRegression2026},
 	\begin{equation}
