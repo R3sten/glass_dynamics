@@ -44,10 +44,10 @@ def extract_pc_representatives(
     model.fit(X_train, y_train)
     
     pca = model.pca_
-    regressor = model.regressor_
+    # regressor = model.regressor_
     
     # pca.components_ shape: (n_components, n_features)
-    # regressor.coef_ shape: (n_targets, n_components)
+    # model.pc_weights_ shape: (n_targets, n_components)
     
     results = {}
     for i, target in enumerate(target_names):
@@ -57,7 +57,7 @@ def extract_pc_representatives(
         top_features = []
         top_loadings = []
         
-        target_coefs = regressor.coef_[i, :]
+        target_coefs = model.pc_weights_[i, :]
         
         for pc_idx in range(n_components):
             pc_indices.append(f"PC{pc_idx + 1}")

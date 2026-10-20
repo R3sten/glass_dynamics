@@ -2,20 +2,22 @@
 Model Evaluation and Physical Validation Module.
 
 This module evaluates the performance of the trained regression models 
-(including Ridge, Elastic Net, and SPCR) on unseen test data. It computes 
-metrics for individual targets in their scaled (training) space. Then, it 
+(including Ridge, Weighted Ridge, Elastic Net, PCR, and SPCR) on unseen test data. 
+It computes metrics for individual targets in their scaled (training) space. Then, it 
 validates the global physical performance by comparing predicted viscosities 
 against both the exact experimental values and the "ideal" viscosities 
 derived from the true MYEGA fitted parameters.
 """
 
+import inspect
 import numpy as np
 import pandas as pd
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error, median_absolute_error
 from sklearn.base import clone
 from scipy.stats import pearsonr
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Union
 from glass_dynamics.core.logger import logger
+
 
 def myega_equation(T: np.ndarray, log_inf: np.ndarray, Tg: np.ndarray, m: np.ndarray) -> np.ndarray:
     """
@@ -37,7 +39,7 @@ def myega_equation(T: np.ndarray, log_inf: np.ndarray, Tg: np.ndarray, m: np.nda
     np.ndarray
         Predicted log10(Viscosity).
     """
-    T = np.maximum(T, 1e-9) # Prevent division by zero
+    T = np.maximum(T, 1e-9)  # Prevent division by zero
     term1 = (12.0 - log_inf) * (Tg / T)
     term2 = np.exp((m / (12.0 - log_inf) - 1.0) * (Tg / T - 1.0))
     return log_inf + term1 * term2
@@ -51,7 +53,8 @@ def evaluate_final_model(
     y_test: pd.DataFrame,
     viscosity_df: pd.DataFrame,
     y_scaler: Optional[Any] = None,
-    target_cols: list = ['Tg', 'm','log_inf']
+    target_cols: list = ['Tg', 'm', 'log_inf'],
+    sample_weight: Optional[Union[pd.Series, np.ndarray]] = None
 ) -> Dict[str, Any]:
     """
     Train and evaluate the model on individual parameters (scaled space) 
@@ -70,33 +73,69 @@ def evaluate_final_model(
         Must contain columns 'ID', 'T', and 'log_visc'.
     y_scaler : Any, optional
         A fitted scaler used to inverse_transform targets back to physical units.
-    target_cols : list, default=['Tg', 'm','log_inf']
+    target_cols : list, default=['Tg', 'm', 'log_inf']
         The names of the target columns.
+    sample_weight : Optional[Union[pd.Series, np.ndarray]], default=None
+        Optional sample weights for training liquids (e.g., inverse MYEGA fit MSE).
+        If None, standard unweighted training is performed (100% backward-compatible).
 
     Returns
     -------
     Dict[str, Any]
         Dictionary containing all computed metrics and prediction arrays.
     """
-    model_name = model.__class__.__name__
-    logger.info(f"Training and Evaluating {model_name} on the unseen Test Set ({len(X_test)} glasses)...")
+    model_name = type(model).__name__
+    weight_status = "WITH sample weights" if sample_weight is not None else "unweighted"
+    logger.info(
+        f"Training ({weight_status}) and Evaluating {model_name} "
+        f"on the unseen Test Set ({len(X_test)} glasses)..."
+    )
     
     results = {"parameters": {}, "viscosity_vs_experimental": {}, "viscosity_vs_fitted": {}}
     
+    # Prepare and align training sample weights if provided
+    if sample_weight is not None:
+        if isinstance(sample_weight, pd.Series) and isinstance(X_train, pd.DataFrame):
+            if X_train.index.isin(sample_weight.index).all():
+                w_train = sample_weight.loc[X_train.index].to_numpy(dtype=float)
+            else:
+                w_train = sample_weight.to_numpy(dtype=float)
+        else:
+            w_train = np.asarray(sample_weight, dtype=float).ravel()
+    else:
+        w_train = None
+
+    # Helper to fit a model safely with or without sample_weight
+    def _fit_model(estimator: Any, X_tr: Any, y_tr: Any, weights: Optional[np.ndarray]) -> Any:
+        if weights is not None:
+            fit_params = inspect.signature(estimator.fit).parameters
+            if "sample_weight" in fit_params:
+                estimator.fit(X_tr, y_tr, sample_weight=weights)
+            else:
+                logger.warning(
+                    f"{type(estimator).__name__}.fit() does not support 'sample_weight'. "
+                    f"Falling back to unweighted fit."
+                )
+                estimator.fit(X_tr, y_tr)
+        else:
+            estimator.fit(X_tr, y_tr)
+        return estimator
+
     # Storage for predictions
     y_pred_scaled = np.zeros_like(y_test.to_numpy())
     
     # --- 1. INTELLIGENT TRAINING & PREDICTION ---
-    if model_name == "CustomSupervisedPCR":
-        # SPCR requires a specific optimal subspace for each target
+    if "Supervised" in model_name:
+        # SPCR requires a specific optimal subspace for each target (1D target vector)
         for i, target in enumerate(target_cols):
             target_model = clone(model)
-            target_model.fit(X_train, y_train[target])
+            y_target_1d = y_train[target].to_numpy().ravel()
+            _fit_model(target_model, X_train, y_target_1d, w_train)
             y_pred_scaled[:, i] = target_model.predict(X_test)
     else:
-        # Standard models (Ridge, ElasticNet, PCR) can handle multi-target natively
+        # Standard models (Ridge, ElasticNet, PCR) handle multi-target natively
         cloned_model = clone(model)
-        cloned_model.fit(X_train, y_train)
+        _fit_model(cloned_model, X_train, y_train, w_train)
         y_pred_scaled = cloned_model.predict(X_test)
 
     # --- 2. Parameter Evaluation (In Scaled Space) ---
@@ -143,9 +182,9 @@ def evaluate_final_model(
     # --- 4. Global Viscosity Evaluation ---
     logger.info("Computing global viscosity performance via MYEGA equation...")
     
-    true_viscosities = []  # Experimental log_visc
-    inter_viscosities = [] # MYEGA log_visc using true fitted parameters
-    pred_viscosities = []  # MYEGA log_visc using predicted parameters
+    true_viscosities = []   # Experimental log_visc
+    inter_viscosities = []  # MYEGA log_visc using true fitted parameters
+    pred_viscosities = []   # MYEGA log_visc using predicted parameters
 
     # Dynamically find the appropriate column names based on substring matches
     tg_col = next(c for c in target_cols if 'Tg' in c)

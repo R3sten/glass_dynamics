@@ -141,7 +141,7 @@ def extract_spcr_representatives(
         
         pca = model.pca_
         selected_indices = model.selected_pc_indices_
-        coefs = model.regressor_.coef_
+        coefs = model.pc_weights_
         
         pc_names = []
         weights = []

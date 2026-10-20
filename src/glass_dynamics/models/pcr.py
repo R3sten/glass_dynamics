@@ -51,17 +51,34 @@ class CustomPCR(BaseEstimator, RegressorMixin):
         self.regressor_ = LinearRegression(fit_intercept=self.fit_intercept)
         self.regressor_.fit(X_pca, y)
         
-        # 3. Project coefficients back to original feature space for interpretability
-        # W_original = W_pca (dot) PCA_components
-        # self.regressor_.coef_ shape: (n_targets, n_components)
-        # self.pca_.components_ shape: (n_components, n_features)
-        if y.ndim == 1:
-            self.coef_ = self.regressor_.coef_ @ self.pca_.components_
-        else:
-            self.coef_ = self.regressor_.coef_ @ self.pca_.components_
-            
-        self.intercept_ = self.regressor_.intercept_
         
+        # Salviamo i pesi originali grezzi (affetti dallo scaling di sklearn)
+        self.pc_weights_raw_ = self.regressor_.coef_
+
+        # 2. Estrazione dei pesi grezzi. 
+        # NON usiamo ravel(), così manteniamo la forma (n_targets, n_components)
+        self.pc_weights_raw_ = self.regressor_.coef_
+
+        # 3. Pesi normalizzati (w_tilde = w_raw * sqrt(lambda))
+        selected_lambdas = self.pca_.explained_variance_[:self.n_components]
+        # NumPy moltiplica automaticamente ogni riga della matrice per i 14 lambda (broadcasting)
+        self.pc_weights_ = self.pc_weights_raw_ * np.sqrt(selected_lambdas)
+
+        # 4. Retro-proiezione sulle feature originali
+        # Usiamo lo slicing [:self.n_components] invece di selected_indices_
+        selected_components = self.pca_.components_[:self.n_components, :]
+        
+        # Gestione sicura del prodotto scalare (multi-target vs single-target)
+        if self.pc_weights_raw_.ndim > 1:
+            # Multi-target: (3, 14) @ (14, 560) -> (3, 560)
+            self.coef_ = self.pc_weights_raw_ @ selected_components
+        else:
+            # Single-target: (14, 560).T @ (14,) -> (560,)
+            self.coef_ = selected_components.T @ self.pc_weights_raw_
+
+        if self.fit_intercept:
+            self.intercept_ = self.regressor_.intercept_
+            
         return self
 
     def predict(self, X):

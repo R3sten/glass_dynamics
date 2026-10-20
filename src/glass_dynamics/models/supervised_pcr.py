@@ -46,6 +46,7 @@ class CustomSupervisedPCR(BaseEstimator, RegressorMixin):
         """
         Fits the Supervised PCA and the linear regressor.
         """
+        
         y_1d = np.asarray(y).ravel()
         
         # 1. Unsupervised Extraction
@@ -72,6 +73,9 @@ class CustomSupervisedPCR(BaseEstimator, RegressorMixin):
         self.correlations_ = np.array(correlations)
         valid_indices = np.array(valid_indices)
         
+        sorted_order = np.argsort(correlations)[::-1]
+        self.selected_indices_ = sorted_order[:self.n_components]
+        
         # 3. Supervised Selection
         # If n_components is larger than valid components, cap it
         n_to_select = min(self.n_components, len(valid_indices))
@@ -87,10 +91,22 @@ class CustomSupervisedPCR(BaseEstimator, RegressorMixin):
         # 4. Linear Regression
         self.regressor_ = LinearRegression(fit_intercept=self.fit_intercept)
         self.regressor_.fit(X_pca_selected, y_1d)
+
+
+        # Salviamo i pesi originali grezzi (affetti dallo scaling di sklearn)
+        self.pc_weights_raw_ = self.regressor_.coef_.ravel()
+
+        # Calcoliamo i pesi normalizzati (w_tilde = w_raw * sqrt(lambda))
+        selected_lambdas = self.pca_.explained_variance_[self.selected_indices_]
+        self.pc_weights_ = self.pc_weights_raw_ * np.sqrt(selected_lambdas)
+        
         
         # 5. Project coefficients back to original feature space
-        self.coef_ = self.regressor_.coef_ @ self.pca_.components_[self.selected_pc_indices_, :]
-        self.intercept_ = self.regressor_.intercept_
+        selected_components = self.pca_.components_[self.selected_indices_, :]
+        self.coef_ = selected_components.T @ self.pc_weights_raw_
+        
+        if self.fit_intercept:
+            self.intercept_ = self.regressor_.intercept_
         
         return self
 

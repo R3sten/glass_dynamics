@@ -2,11 +2,13 @@
 Custom Ridge Regression Model.
 
 This module implements a mathematically explicit Ridge Regression from scratch,
-strictly following the objective function used in physics and statistical literature:
-    Loss = (1/N) * ||Y - XW||^2 + alpha * ||W||^2
+strictly following the objective function used in physics and statistical literature
+(e.g., Sharma et al., Thesis Eq. 1.8 & 1.9):
+    Loss = (1 / 2N) * ||Y - XW||_2^2 + (alpha / 2) * ||W||_2^2
 
-It natively supports multi-target regression, computes exact effective 
-degrees of freedom, and estimates standard errors for both coefficients and predictions.
+It natively supports multi-target regression, optional sample weighting (Weighted Ridge
+for heteroscedastic MYEGA fit errors), computes exact effective degrees of freedom, 
+and estimates standard errors for both coefficients and predictions.
 """
 
 import numpy as np
@@ -15,10 +17,11 @@ from typing import Tuple, Optional, Union
 from sklearn.base import BaseEstimator
 from glass_dynamics.core.logger import logger
 
+
 class CustomRidgeRegression(BaseEstimator):
     """
     A transparent, mathematically explicit implementation of Ridge Regression.
-    Inherits from BaseEstimator to be fully compatible with scikit-learn utilities
+    Inherits from BaseEstimator to be fully compatible with scikit-learn utilities.
     
     Attributes
     ----------
@@ -55,10 +58,12 @@ class CustomRidgeRegression(BaseEstimator):
     def fit(
         self, 
         X: Union[pd.DataFrame, np.ndarray], 
-        Y: Union[pd.DataFrame, pd.Series, np.ndarray]
+        Y: Union[pd.DataFrame, pd.Series, np.ndarray],
+        sample_weight: Optional[Union[pd.Series, np.ndarray]] = None
     ) -> 'CustomRidgeRegression':
         """
         Fit the Ridge regression model and compute statistical uncertainties.
+        Optionally supports sample weights to down-weight noisy experimental fits.
 
         Parameters
         ----------
@@ -66,6 +71,9 @@ class CustomRidgeRegression(BaseEstimator):
             Training feature matrix of shape (N, P).
         Y : Union[pd.DataFrame, pd.Series, np.ndarray]
             Training target matrix of shape (N, T) for multi-target, or (N,) for single.
+        sample_weight : Optional[Union[pd.Series, np.ndarray]], default=None
+            Individual weights for each sample of shape (N,). If None, all samples 
+            are given equal unit weight, preserving exact standard Ridge behavior.
 
         Returns
         -------
@@ -73,8 +81,8 @@ class CustomRidgeRegression(BaseEstimator):
             The fitted model instance.
         """
         # Ensure numpy arrays for matrix operations
-        X_mat = X.to_numpy() if isinstance(X, pd.DataFrame) else np.asarray(X)
-        Y_mat = Y.to_numpy() if isinstance(Y, (pd.DataFrame, pd.Series)) else np.asarray(Y)
+        X_mat = X.to_numpy(dtype=float) if isinstance(X, pd.DataFrame) else np.asarray(X, dtype=float)
+        Y_mat = Y.to_numpy(dtype=float) if isinstance(Y, (pd.DataFrame, pd.Series)) else np.asarray(Y, dtype=float)
         
         if Y_mat.ndim == 1:
             Y_mat = Y_mat.reshape(-1, 1)
@@ -82,10 +90,29 @@ class CustomRidgeRegression(BaseEstimator):
         N, P = X_mat.shape
         _, T = Y_mat.shape
 
-        # Data centering
+        # Prepare and normalize sample weights if provided
+        if sample_weight is not None:
+            w = sample_weight.to_numpy(dtype=float) if isinstance(sample_weight, pd.Series) else np.asarray(sample_weight, dtype=float)
+            w = w.ravel()
+            if len(w) != N:
+                raise ValueError(f"sample_weight length ({len(w)}) must match number of samples N ({N}).")
+            if np.any(w < 0):
+                raise ValueError("sample_weight cannot contain negative values.")
+            
+            # Normalize weights so that their mean is 1.0 (sum(w_norm) = N).
+            # This guarantees that the (1/N) scaling and alpha penalty remain invariant.
+            w_norm = w * (N / np.sum(w))
+        else:
+            w_norm = None
+
+        # Data centering (unweighted or weighted mean depending on sample_weight)
         if self.fit_intercept:
-            self.X_mean_ = np.mean(X_mat, axis=0)
-            self.Y_mean_ = np.mean(Y_mat, axis=0)
+            if w_norm is None:
+                self.X_mean_ = np.mean(X_mat, axis=0)
+                self.Y_mean_ = np.mean(Y_mat, axis=0)
+            else:
+                self.X_mean_ = np.average(X_mat, axis=0, weights=w_norm)
+                self.Y_mean_ = np.average(Y_mat, axis=0, weights=w_norm)
             X_c = X_mat - self.X_mean_
             Y_c = Y_mat - self.Y_mean_
         else:
@@ -94,10 +121,21 @@ class CustomRidgeRegression(BaseEstimator):
             X_c = X_mat
             Y_c = Y_mat
 
-        # 1. Compute empirical covariance matrix (C = X^T * X / N)
-        # and cross-covariance (XY = X^T * Y / N)
-        C = (X_c.T @ X_c) / N
-        XY = (X_c.T @ Y_c) / N
+        # Apply square-root weights to centered matrices if weighted regression is active.
+        # By defining X_eff = sqrt(P) * X_c and Y_eff = sqrt(P) * Y_c,
+        # (X_eff^T @ X_eff) / N equals (X_c^T @ P @ X_c) / N.
+        if w_norm is not None:
+            sqrt_w = np.sqrt(w_norm)[:, np.newaxis]
+            X_eff = X_c * sqrt_w
+            Y_eff = Y_c * sqrt_w
+        else:
+            X_eff = X_c
+            Y_eff = Y_c
+
+        # 1. Compute empirical covariance matrix (C = X^T * P * X / N)
+        # and cross-covariance (XY = X^T * P * Y / N), matching Thesis Eq. (1.9)
+        C = (X_eff.T @ X_eff) / N
+        XY = (X_eff.T @ Y_eff) / N
 
         # 2. Construct the Ridge matrix: (C + alpha * I)
         I = np.eye(P)
@@ -121,15 +159,15 @@ class CustomRidgeRegression(BaseEstimator):
         ridge_inv = np.linalg.inv(ridge_matrix)
         
         # Calculate Effective Degrees of Freedom (EDF)
-        # EDF = trace( X * (X^T X + N*alpha*I)^-1 * X^T ) = trace( (C + alpha I)^-1 * C )
+        # EDF = trace( (C + alpha I)^-1 * C )
         self.effective_df_ = np.trace(ridge_inv @ C)
         
-        # Calculate residuals and estimate intrinsic noise variance (sigma^2)
-        Y_pred = X_c @ self.coef_
-        residuals = Y_c - Y_pred
+        # Calculate (weighted) residuals and estimate intrinsic noise variance (sigma^2)
+        Y_pred_eff = X_eff @ self.coef_
+        residuals_eff = Y_eff - Y_pred_eff
         
         # Unbiased estimator for variance using EDF
-        self.sigma_squared_ = np.sum(residuals**2, axis=0) / (N - self.effective_df_)
+        self.sigma_squared_ = np.sum(residuals_eff**2, axis=0) / (N - self.effective_df_)
 
         # Covariance matrix of the coefficients (unscaled by noise)
         # Var(W) = (sigma^2 / N) * [ (C + alpha I)^-1 * C * (C + alpha I)^-1 ]
@@ -166,7 +204,7 @@ class CustomRidgeRegression(BaseEstimator):
         Y_std : np.ndarray, optional
             Standard errors of the predictions of shape (M, T), returned if return_std=True.
         """
-        X_mat = X.to_numpy() if isinstance(X, pd.DataFrame) else np.asarray(X)
+        X_mat = X.to_numpy(dtype=float) if isinstance(X, pd.DataFrame) else np.asarray(X, dtype=float)
         M, _ = X_mat.shape
         T = self.coef_.shape[1]
 

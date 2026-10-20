@@ -27,7 +27,8 @@ def compute_ridge_viscosity_alpha_grid(
     X_test: pd.DataFrame,
     y_test: pd.DataFrame,
     viscosity_df: pd.DataFrame,
-    y_scaler: Any = None
+    y_scaler: Any = None,
+    sample_weight: pd.Series = None
 ) -> pd.DataFrame:
     """
     Computes global viscosity R^2 and RMSE across varying alpha penalties for Ridge.
@@ -43,13 +44,16 @@ def compute_ridge_viscosity_alpha_grid(
     
     results = []
     
+    # Extract aligned training weights if provided
+    w_train = sample_weight.loc[X_train.index].to_numpy() if sample_weight is not None else None
+    
     for alpha in alpha_array:
         model = clone(base_model)
         # Assuming the model has an 'alpha' parameter standard to scikit-learn
         model.set_params(alpha=alpha)
         
         # Train and Predict
-        model.fit(X_train, y_train)
+        model.fit(X_train, y_train, sample_weight=w_train)
         y_train_pred_scaled = model.predict(X_train)
         y_test_pred_scaled = model.predict(X_test)
             

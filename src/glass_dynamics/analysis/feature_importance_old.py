@@ -21,7 +21,8 @@ def extract_importance(
     alpha: float = 0.1,
     n_splits: int = 100,
     test_size: float = 0.5,
-    sort_by: str = 'magnitude'
+    sort_by: str = 'magnitude',
+    sample_weight: pd.Series = None
 ) -> Dict[str, pd.DataFrame]:
     """
     Extract robust, unnormalized feature weights for a specific alpha value.
@@ -63,11 +64,19 @@ def extract_importance(
     all_weights = np.zeros((n_splits, n_features, n_targets))
     model = CustomRidgeRegression(alpha=alpha, fit_intercept=True)
     
+    w_mat = sample_weight.loc[X.index].to_numpy() if sample_weight is not None else None
+    
     for seed in range(n_splits):
-        X_train, _, y_train, _ = train_test_split(
-            X_mat, y_mat, test_size=test_size, random_state=seed
-        )
-        model.fit(X_train, y_train)
+        if w_mat is not None:
+            X_train, _, y_train, _, w_train, _ = train_test_split(
+                X_mat, y_mat, w_mat, test_size=test_size, random_state=seed
+            )
+            model.fit(X_train, y_train, sample_weight=w_train)
+        else:
+            X_train, _, y_train, _ = train_test_split(
+                X_mat, y_mat, test_size=test_size, random_state=seed
+            )
+            model.fit(X_train, y_train)
         
         weights = model.coef_
         if weights.ndim == 1:
