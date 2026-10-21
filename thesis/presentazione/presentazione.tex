@@ -9,6 +9,7 @@
 \usepackage[export]{adjustbox}
 \usepackage{booktabs}
 \usepackage{array}
+\usepackage{tikz}
 
 \graphicspath{{figures/}{../figures/}}
 
@@ -97,30 +98,111 @@
 			\begin{column}{0.5\textwidth}
 				\small
 				\textbf{Legge di Arrhenius}
-				\vspace{-0.15cm}
+				\vspace{-0.2cm}
 				$$\eta(T) = \eta_\infty \exp\left( \frac{E_a}{k_B T} \right)$$
 				
-				\vspace{0.2cm}
+				\vspace{0.05cm}
 				\textbf{Modello MYEGA}
-				\vspace{-0.15cm}
+				\vspace{-0.2cm}
 				$$\eta(T) = \eta_\infty \exp \left[ \frac{K}{T} \exp\left( \frac{C}{T} \right) \right]$$
 				
-				\vspace{0.2cm}
-				Riscrittura in funzione di $T_g, m, \eta_\infty$
-				\vspace{-0.15cm}
+				\vspace{0.05cm}
+				Riscrittura in funzione di ($T_g, m, \eta_\infty$)
+				\vspace{-0.2cm}
 				{\footnotesize
 					$$\begin{aligned}
 						\log_{10} \eta(T) &= \log_{10} \eta_\infty + (12 - \log_{10} \eta_\infty) \frac{T_g}{T} \times \\
 						&\times \exp \left[ \left( \frac{m}{12 - \log_{10} \eta_\infty} - 1 \right) \left( \frac{T_g}{T} - 1 \right) \right]
 					\end{aligned}$$}
+				
+				\vspace{0.15cm}
+				\begin{tikzpicture}[opacity=0]
+					\node[draw=red!75!black, fill=red!6, thick, rounded corners=3pt, inner sep=6pt, text width=0.92\linewidth, align=left, font=\footnotesize] {
+						\textbf{\color{red!75!black} Approccio \textit{data-driven}}\\
+						Predire $(T_g, m, \eta_\infty)$ direttamente dalla composizione chimica del liquido.
+					};
+				\end{tikzpicture}
 			\end{column}
 		\end{columns}
 	\end{frame}
 	
-	\begin{frame}{Pipeline di lavoro}
+	\begin{frame}[noframenumbering]{Andamento della viscosità ed equazione MYEGA}
+		\begin{columns}[c]
+			\begin{column}{0.45\textwidth}
+				\centering
+				\includegraphics[height=6.2cm]{angell_plot.png} \\[0.1cm]
+				{\scriptsize\color{MutedColor} Grafico di Angell (Angell, \textit{Science}, 1995)}
+			\end{column}
+			\hspace{0.4cm}
+			\begin{column}{0.5\textwidth}
+				\small
+				\textbf{Legge di Arrhenius}
+				\vspace{-0.2cm}
+				$$\eta(T) = \eta_\infty \exp\left( \frac{E_a}{k_B T} \right)$$
+				
+				\vspace{0.05cm}
+				\textbf{Modello MYEGA}
+				\vspace{-0.2cm}
+				$$\eta(T) = \eta_\infty \exp \left[ \frac{K}{T} \exp\left( \frac{C}{T} \right) \right]$$
+				
+				\vspace{0.05cm}
+				Riscrittura in funzione di ($T_g, m, \eta_\infty$)
+				\vspace{-0.2cm}
+				{\footnotesize
+					$$\begin{aligned}
+						\log_{10} \eta(T) &= \log_{10} \eta_\infty + (12 - \log_{10} \eta_\infty) \frac{T_g}{T} \times \\
+						&\times \exp \left[ \left( \frac{m}{12 - \log_{10} \eta_\infty} - 1 \right) \left( \frac{T_g}{T} - 1 \right) \right]
+					\end{aligned}$$}
+				
+				\vspace{0.15cm}
+				\begin{tikzpicture}
+					\node[draw=red!75!black, fill=red!6, thick, rounded corners=3pt, inner sep=6pt, text width=0.92\linewidth, align=left, font=\footnotesize] {
+						\textbf{\color{red!75!black} Approccio \textit{data-driven}}\\
+						Predire $(T_g, m, \eta_\infty)$ direttamente dalla composizione chimica del liquido.
+					};
+				\end{tikzpicture}
+			\end{column}
+		\end{columns}
+	\end{frame}
+	
+	\begin{frame}{Pipeline di lavoro di ViscNet}
 		\centering
-		\includegraphics[width=0.78\textwidth]{flowchart_viscnet.png} \\[0.05cm]
-		{\scriptsize\color{MutedColor} Flowchart della pipeline implementata nel modello ViscNet (Cassar, \textit{Acta Mater.}, 2021)}
+		\begin{tikzpicture}
+			\node[anchor=south west, inner sep=0pt] (img) at (0,0) {\includegraphics[width=0.78\textwidth]{flowchart_viscnet.png}};
+		\end{tikzpicture} \\[0.05cm]
+		{\scriptsize\color{MutedColor} Flowchart della pipeline implementata nel modello ViscNet (Cassar, \textit{Acta Materialia}, 2021)}
+		
+		\vspace{0.3cm}
+		\begin{columns}[c]
+			\begin{column}{0.5\textwidth}
+				\vphantom{\small\textbf{Modello di regressione lineare:}}
+			\end{column}
+			\begin{column}{0.5\textwidth}
+				\vphantom{\small $y = w_0 + \sum_{i=1}^M w_i x_i = w_0 + \mathbf{w}^T \mathbf{x}$}
+			\end{column}
+		\end{columns}
+	\end{frame}
+	
+	\begin{frame}[noframenumbering]{Pipeline di lavoro adottata}
+		\centering
+		\begin{tikzpicture}
+			\node[anchor=south west, inner sep=0pt] (img) at (0,0) {\includegraphics[width=0.78\textwidth]{flowchart_viscnet.png}};
+			\begin{scope}[x={(img.south east)}, y={(img.north west)}]
+				\fill[white] (0.43, 0.71) rectangle (0.70, 0.80);
+				\node[font=\footnotesize\sffamily\bfseries, text=red!75!black] at (0.563, 0.75) {Linear regression};
+				
+				\fill[white] (0.463, 0.22) rectangle (0.663, 0.67);
+				
+				\foreach \yi in {0.645, 0.512, 0.259} {
+					\foreach \yj in {0.582, 0.451, 0.317} {
+						\draw[->, >=stealth, color=PrimaryColor!85, line width=0.6pt] (0.464, \yi) -- (0.662, \yj);
+					}
+				}
+				
+				\draw[red!75!black, line width=1.3pt, rounded corners=16pt] (0.390, 0.160) rectangle (0.735, 0.818);
+			\end{scope}
+		\end{tikzpicture} \\[0.05cm]
+		{\scriptsize\color{MutedColor}\vphantom{Flowchart della pipeline implementata nel modello ViscNet (Cassar, \textit{Acta Materialia}, 2021)}}
 		
 		\vspace{0.3cm}
 		\begin{columns}[c]
@@ -166,7 +248,7 @@
 		\end{columns}
 	\end{frame}
 	
-	\begin{frame}{Modelli per la gestione della multicollinearità}
+	\begin{frame}{Gestione della multicollinearità nei modelli lineari}
 		\small
 		\textbf{Minimi Quadrati Ordinari (OLS)}
 		$$\mathcal{L}_{\text{OLS}}(\mathbf{w}) = \frac{1}{2N}\|\mathbf{y} - X\mathbf{w}\|_2^2$$
@@ -201,47 +283,39 @@
 		\begin{itemize}
 			\item \textbf{Procedura iterativa:} ad ogni ciclo si calcola il $\text{VIF}_j$ regredendo ciascuna \textit{feature} sulle restanti $M-1$ e si elimina la variabile con valore massimo se $\text{VIF}_j > 10$ ($R_j^2 > 0.90$).
 			\vspace{0.25cm}
-			\item \textbf{Riduzione dello spazio:} il filtraggio riduce i descrittori da $560$ a $45$ \textit{features} ($\text{VIF}_j \le 10$), sulle quali viene poi applicata la regressione OLS.
-			\vspace{0.25cm}
 			\item \textbf{Confronto con ViscNet:} la stessa procedura è impiegato nella pipeline di pre-elaborazione di ViscNet prima dell'addestramento della rete neurale.
 		\end{itemize}
 	\end{frame}
 	
-	\begin{frame}{Scelta dei parametri: Ridge Regression}
-		\begin{columns}[c]
-			\begin{column}{0.58\textwidth}
-				\centering
-				{\footnotesize\bfseries Tracce Ridge ($T_g$)} \\[0.15cm]
-				\includegraphics[trim=0cm 0cm 0cm 0.8cm, clip, height=5.2cm]{tracce_ridge/Tg_fitted.pdf}
-			\end{column}
-			\begin{column}{0.4\textwidth}
-				\centering
-				{\footnotesize\bfseries Performance su viscosità globale ($R^2$)} \\[0.15cm]
-				\adjincludegraphics[trim={0cm 0cm {0.5\width} 0.8cm}, clip, height=5.4cm]{performance/ridge/Ridge_Global_Viscosity_vs_Alpha.pdf}
-			\end{column}
-		\end{columns}
-	\end{frame}
-	
-	\begin{frame}{Scelta dei parametri: Elastic Net}
-		\begin{columns}[c]
-			\begin{column}{0.52\textwidth}
-				\centering
-				{\footnotesize\bfseries Cross-Validation a 5 fold ($R^2$)} \\[0.15cm]
-				\adjincludegraphics[trim={0.2cm 0cm {0.5\width} 1.5cm}, clip, height=5.3cm]{performance/elastic_net/ElasticNet_CV_Heatmap_Global_Viscosity.pdf}
-			\end{column}
-			\begin{column}{0.44\textwidth}
-				\small
-				\begin{itemize}
-					\item \textbf{Massimo assoluto:}
-					$$\beta = 0, \quad \alpha = 0.01$$
-					(corrispondente alla regressione Ridge).
-					\vspace{0.5cm}
-					\item \textbf{Configurazione selezionata per indurre sparsità:}
-					$$\alpha = 0.1, \quad \beta = 0.8$$
-				\end{itemize}
-			\end{column}
-		\end{columns}
-	\end{frame}
+\begin{frame}{Scelta dei parametri}
+	\begin{columns}[c]
+		\begin{column}{0.48\textwidth}
+			\centering
+			{\footnotesize\bfseries Performance su viscosità globale ($R^2$)} \\[0.15cm]
+			\adjincludegraphics[trim={0cm 0cm {0.5\width} 0.8cm}, clip, height=5.6cm]{performance/ridge/Cross_validation_Ridge_Global_Viscosity_vs_Alpha.pdf} \\[0.1cm]
+			{\footnotesize Parametro selezionato: $\bm{\alpha = 0.01}$}
+		\end{column}
+		\begin{column}{0.48\textwidth}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Scelta dei parametri}
+	\begin{columns}[c]
+		\begin{column}{0.48\textwidth}
+			\centering
+			{\footnotesize\bfseries Performance su viscosità globale ($R^2$)} \\[0.15cm]
+			\adjincludegraphics[trim={0cm 0cm {0.5\width} 0.8cm}, clip, height=5.6cm]{performance/ridge/Cross_validation_Ridge_Global_Viscosity_vs_Alpha.pdf} \\[0.1cm]
+			{\footnotesize Parametro selezionato: $\bm{\alpha = 0.01}$}
+		\end{column}
+		\begin{column}{0.48\textwidth}
+			\centering
+			{\footnotesize\bfseries Cross-Validation a 5 fold ($R^2$)} \\[0.15cm]
+			\adjincludegraphics[trim={0.2cm 0.3cm {0.5\width} 1.5cm}, clip, height=5.3cm]{performance/elastic_net/ElasticNet_CV_Heatmap_Global_Viscosity.pdf} \\[0.2cm]
+			{\footnotesize Parametri selezionati: $\bm{\alpha = 0.1,\; \beta = 0.8}$}
+		\end{column}
+	\end{columns}
+\end{frame}
 	
 	\begin{frame}{Valutazione delle performance predittive}
 		\footnotesize
@@ -274,12 +348,14 @@
 			\begin{column}{0.48\textwidth}
 				\centering
 				{\footnotesize\bfseries Ridge Regression} \\[0.1cm]
-				\includegraphics[height=5.5cm]{correlazione/ridge_2D_density_histogram.png}
+				\includegraphics[height=5.5cm]{correlazione/ridge_2D_density_histogram.png} \\
+				{\scriptsize\color{MutedColor}\vphantom{(Cassar, \textit{Acta Materialia}, 2021)}}
 			\end{column}
 			\begin{column}{0.48\textwidth}
 				\centering
-				{\footnotesize\bfseries ViscNet} \\[0.1cm]
-				\includegraphics[height=5.5cm]{correlazione_viscnet.png}
+				{\footnotesize\bfseries ViscNet} \\ [0.1cm]
+				\includegraphics[trim={0cm 0cm 0cm 0.5cm}, clip, height=5.5cm]{correlazione_viscnet.png}
+				{\scriptsize\color{MutedColor} (Cassar, \textit{Acta Materialia}, 2021)}
 			\end{column}
 		\end{columns}
 	\end{frame}
@@ -293,7 +369,7 @@
 			\end{column}
 			\begin{column}{0.48\textwidth}
 				\centering
-				{\footnotesize\bfseries Errore in funzione della composizione chimica} \\[0.15cm]
+				{\\[0.01cm] \footnotesize\bfseries Errore in funzione della composizione chimica} \\[0.3cm]
 				\includegraphics[trim=0cm 0cm 0cm 0.7cm, clip, height=5.2cm]{distanza/ridge_distance_plot.pdf}
 			\end{column}
 		\end{columns}
@@ -359,17 +435,27 @@
 	\begin{frame}{Conclusioni}
 		\small
 		\begin{itemize}
-			\item \textbf{Accuratezza:} sfruttando l'intero insieme di 560 \textit{features} regolarizzate tramite norma $L_2$, la regressione lineare Ridge supera la rete neurale ViscNet ($R^2 = 0.935$ vs $0.926$, $\text{RMSE} = 1.031$, $\text{MedAE} = 0.392$) ed evita il \textit{bias} di sovrastima alle basse viscosità.
+			\item \textbf{Accuratezza:} sfruttando l'intero insieme di 560 \textit{features} regolarizzate tramite norma $L_2$, la regressione lineare Ridge supera la rete neurale ViscNet ($R^2 = 0.935$ vs $0.926$, $\text{RMSE} = 1.031$, $\text{MedAE} = 0.392$) ed evita il \textit{bias} di sovrastima a basse viscosità.
 			\vspace{0.35cm}
 			
 			\item \textbf{Perdita di interpretabilità nei sistemi complessi:} l'impossibilità di isolare un set ristretto di descrittori senza degradare le performance sembra essere indipendente dal modello adottato e conseguenza dalla natura cooperativa della transizione vetrosa.
 			\vspace{0.35cm}
 			
-			\item \textbf{Vantaggi della regressione lineare:} a parità di accuratezza con le reti neurali, il modello lineare offre un addestramento immediato, indipendente dal numero di features, e definisce una mappa globale e costante delle correlazioni termodinamiche.
+			\item \textbf{Vantaggi della regressione lineare:} a parità di accuratezza con le reti neurali, il modello lineare offre un addestramento immediato e definisce una mappa globale e costante delle correlazioni termodinamiche.
 		\end{itemize}
 	\end{frame}
 	
 	\appendix
+	
+	
+	\begin{frame}{Backup: Tracce Ridge e stabilità dei pesi ($T_g$)}
+		\centering
+		\includegraphics[trim=0cm 0cm 0cm 0.8cm, clip, height=5.6cm]{tracce_ridge/Tg_fitted.pdf} \\[0.25cm]
+		\begin{minipage}{0.82\textwidth}
+			\centering\footnotesize
+			\textbf{Statistica su 20 \textit{split} casuali:} le linee continue indicano la media dei pesi normalizzati, \\ le bande sfumate rappresentano l'intervallo di una deviazione standard.
+		\end{minipage}
+	\end{frame}
 	
 	\begin{frame}{Backup: Regressione su Componenti Principali (PCR e SPCR)}
 		\small
